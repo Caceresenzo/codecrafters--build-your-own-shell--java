@@ -1,12 +1,15 @@
 
+import java.util.Arrays;
 import java.util.Map;
 import java.util.Scanner;
 import java.util.function.Consumer;
+import java.util.stream.Collectors;
 
 public class Main {
 
 	public static final Map<String, Consumer<String[]>> BUILTINS = Map.of(
-		"exit", (args) -> System.exit(0)
+		"exit", (args) -> System.exit(0),
+		"echo", (args) -> System.out.println(Arrays.stream(args).skip(1).collect(Collectors.joining(" ")))
 	);
 
 	public static void main(String[] args) throws Exception {
