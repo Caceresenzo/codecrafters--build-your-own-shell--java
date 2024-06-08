@@ -24,6 +24,7 @@ public record Executable(
 
 			final var process = new ProcessBuilder(commandArguments)
 				.inheritIO()
+				.directory(shell.getWorkingDirectory().toFile())
 				.start();
 
 			process.waitFor();
