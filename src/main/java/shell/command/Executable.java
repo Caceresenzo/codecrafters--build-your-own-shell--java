@@ -21,7 +21,10 @@ public record Executable(
 				)
 				.toList();
 
-			final var process = new ProcessBuilder(commandArguments).start();
+			final var process = new ProcessBuilder(commandArguments)
+				.inheritIO()
+				.start();
+
 			process.waitFor();
 		} catch (Exception exception) {
 			System.err.println(exception.getMessage());
