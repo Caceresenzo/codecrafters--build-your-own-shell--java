@@ -9,6 +9,7 @@ import lombok.Getter;
 import shell.command.Command;
 import shell.command.Executable;
 import shell.command.builtin.Builtin;
+import shell.command.builtin.Cd;
 import shell.command.builtin.Echo;
 import shell.command.builtin.Exit;
 import shell.command.builtin.Pwd;
@@ -22,7 +23,8 @@ public class Shell {
 		"exit", new Exit(),
 		"echo", new Echo(),
 		"type", new Type(this),
-		"pwd", new Pwd(this)
+		"pwd", new Pwd(this),
+		"cd", new Cd(this)
 	);
 
 	private @Getter Path workingDirectory = Path.of(".").toAbsolutePath().normalize();
@@ -45,6 +47,15 @@ public class Shell {
 		}
 
 		return null;
+	}
+
+	public boolean changeWorkingDirectory(Path path) {
+		if (!Files.exists(path)) {
+			return false;
+		}
+
+		workingDirectory = path;
+		return true;
 	}
 
 }
