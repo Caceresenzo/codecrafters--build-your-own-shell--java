@@ -30,6 +30,15 @@ public class Cd implements Builtin {
 			return shell.getWorkingDirectory().resolve(input);
 		}
 
+		if (input.startsWith("~")) {
+			final var home = System.getenv("HOME");
+			if (home == null) {
+				throw new UnsupportedOperationException("$HOME is not defined");
+			}
+
+			return Path.of(home, input.substring(1));
+		}
+
 		throw new UnsupportedOperationException("path `%s`".formatted(input));
 	}
 

@@ -1,5 +1,6 @@
 package shell;
 
+import java.util.NoSuchElementException;
 import java.util.Scanner;
 
 public class Main {
@@ -12,7 +13,7 @@ public class Main {
 				final var line = read(scanner);
 				eval(shell, line);
 			}
-		}
+		} catch (NoSuchElementException exception) {}
 	}
 
 	public static String read(Scanner scanner) {
