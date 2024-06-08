@@ -6,7 +6,11 @@ public class Main {
 		System.out.print("$ ");
 
 		try (Scanner scanner = new Scanner(System.in)) {
-			String input = scanner.nextLine();
+			final var input = scanner.nextLine();
+			final var arguments = input.split(" ");
+			final var program = arguments[0];
+
+			System.out.println("%s: command not found".formatted(program));
 		}
 	}
 
