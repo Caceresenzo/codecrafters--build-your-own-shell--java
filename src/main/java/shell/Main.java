@@ -33,7 +33,7 @@ public class Main {
 
 		final var command = shell.find(program);
 		if (command != null) {
-			command.execute(arguments);
+			command.execute(shell, arguments);
 		} else {
 			System.out.println("%s: command not found".formatted(program));
 		}

@@ -20,11 +20,11 @@ public class Shell {
 	public static final boolean IS_WINDOWS = System.getProperty("os.name").startsWith("Windows");
 
 	public final Map<String, Builtin> builtins = Map.of(
-		"exit", new Exit(),
-		"echo", new Echo(),
-		"type", new Type(this),
-		"pwd", new Pwd(this),
-		"cd", new Cd(this)
+		"exit", Exit.INSTANCE,
+		"echo", Echo.INSTANCE,
+		"type", Type.INSTANCE,
+		"pwd", Pwd.INSTANCE,
+		"cd", Cd.INSTANCE
 	);
 
 	private @Getter Path workingDirectory = Path.of(".").toAbsolutePath().normalize();

@@ -2,26 +2,23 @@ package shell.command.builtin;
 
 import java.nio.file.Path;
 
-import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
 import shell.Shell;
 
-@RequiredArgsConstructor
-public class Cd implements Builtin {
+public enum Cd implements Builtin {
 
-	private final @NonNull Shell shell;
+	INSTANCE;
 
 	@Override
-	public void execute(String[] arguments) {
+	public void execute(Shell shell, String[] arguments) {
 		final var path = arguments[1];
-		final var absolute = toAbsolute(path).normalize().toAbsolutePath();
+		final var absolute = toAbsolute(shell, path).normalize().toAbsolutePath();
 
 		if (!shell.changeWorkingDirectory(absolute)) {
 			System.out.println("cd: %s: No such file or directory".formatted(absolute));
 		}
 	}
 
-	public Path toAbsolute(String input) {
+	public Path toAbsolute(Shell shell, String input) {
 		if (input.startsWith("/")) {
 			return Path.of(input);
 		}

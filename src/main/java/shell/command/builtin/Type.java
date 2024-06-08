@@ -1,17 +1,14 @@
 package shell.command.builtin;
 
-import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
 import shell.Shell;
 import shell.command.Executable;
 
-@RequiredArgsConstructor
-public class Type implements Builtin {
+public enum Type implements Builtin {
 
-	private final @NonNull Shell shell;
+	INSTANCE;
 
 	@Override
-	public void execute(String[] arguments) {
+	public void execute(Shell shell, String[] arguments) {
 		final var program = arguments[1];
 		final var command = shell.find(program);
 

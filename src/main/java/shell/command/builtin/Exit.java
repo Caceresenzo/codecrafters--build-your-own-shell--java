@@ -1,9 +1,13 @@
 package shell.command.builtin;
 
-public class Exit implements Builtin {
+import shell.Shell;
+
+public enum Exit implements Builtin {
+
+	INSTANCE;
 
 	@Override
-	public void execute(String[] arguments) {
+	public void execute(Shell shell, String[] arguments) {
 		System.exit(0);
 	}
 

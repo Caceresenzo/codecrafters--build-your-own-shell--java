@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.stream.Stream;
 
 import lombok.SneakyThrows;
+import shell.Shell;
 
 public record Executable(
 	Path path
@@ -12,7 +13,7 @@ public record Executable(
 
 	@SneakyThrows
 	@Override
-	public void execute(String[] arguments) {
+	public void execute(Shell shell, String[] arguments) {
 		try {
 			final var commandArguments = Stream
 				.concat(

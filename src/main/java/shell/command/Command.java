@@ -1,7 +1,9 @@
 package shell.command;
 
+import shell.Shell;
+
 public interface Command {
 
-	void execute(String[] arguments);
+	void execute(Shell shell, String[] arguments);
 
 }
