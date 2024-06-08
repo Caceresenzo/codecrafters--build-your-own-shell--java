@@ -1,14 +1,17 @@
 package shell;
 
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Map;
 
+import lombok.Getter;
 import shell.command.Command;
 import shell.command.Executable;
 import shell.command.builtin.Builtin;
 import shell.command.builtin.Echo;
 import shell.command.builtin.Exit;
+import shell.command.builtin.Pwd;
 import shell.command.builtin.Type;
 
 public class Shell {
@@ -18,8 +21,11 @@ public class Shell {
 	public final Map<String, Builtin> builtins = Map.of(
 		"exit", new Exit(),
 		"echo", new Echo(),
-		"type", new Type(this)
+		"type", new Type(this),
+		"pwd", new Pwd(this)
 	);
+
+	private @Getter Path workingDirectory = Path.of(".").toAbsolutePath().normalize();
 
 	public Command find(String program) {
 		final var builtin = builtins.get(program);
