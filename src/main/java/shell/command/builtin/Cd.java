@@ -14,7 +14,7 @@ public class Cd implements Builtin {
 	@Override
 	public void execute(String[] arguments) {
 		final var path = arguments[1];
-		final var absolute = toAbsolute(path).normalize();
+		final var absolute = toAbsolute(path).normalize().toAbsolutePath();
 
 		if (!shell.changeWorkingDirectory(absolute)) {
 			System.out.println("cd: %s: No such file or directory".formatted(absolute));
@@ -24,6 +24,10 @@ public class Cd implements Builtin {
 	public Path toAbsolute(String input) {
 		if (input.startsWith("/")) {
 			return Path.of(input);
+		}
+
+		if (input.startsWith(".")) {
+			return shell.getWorkingDirectory().resolve(input);
 		}
 
 		throw new UnsupportedOperationException("path `%s`".formatted(input));
