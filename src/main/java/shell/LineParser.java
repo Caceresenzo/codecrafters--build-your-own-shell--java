@@ -62,18 +62,31 @@ public class LineParser {
 	}
 
 	private void backslash(boolean inQuote) {
-		char character = iterator.next();
+		var character = iterator.next();
 
 		if (character == CharacterIterator.DONE) {
 			return;
 		}
 
 		if (inQuote) {
-			stringBuilder.append(BACKSLASH);
-			stringBuilder.append(character);
-		} else {
-			stringBuilder.append(character);
+			final var mappedCharacter = mapBackslashCharacter(character);
+
+			if (mappedCharacter != CharacterIterator.DONE) {
+				character = mappedCharacter;
+			} else {
+				stringBuilder.append(BACKSLASH);
+			}
 		}
+
+		stringBuilder.append(character);
+	}
+
+	private char mapBackslashCharacter(char character) {
+		return switch (character) {
+			case DOUBLE -> DOUBLE;
+			case BACKSLASH -> BACKSLASH;
+			default -> CharacterIterator.DONE;
+		};
 	}
 
 }

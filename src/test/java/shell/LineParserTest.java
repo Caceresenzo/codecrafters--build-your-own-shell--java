@@ -25,6 +25,12 @@ class LineParserTest {
 
 		assertThat(parse("echo \"/tmp/foo/f'\\'47\""))
 			.containsExactly("echo", "/tmp/foo/f'\\'47");
+
+		assertThat(parse("echo \"hello'script'\\\\n'world\""))
+			.containsExactly("echo", "hello'script'\\n'world");
+
+		assertThat(parse("echo \"hello\\\"insidequotes\"script\\\""))
+			.containsExactly("echo", "hello\"insidequotesscript\"");
 	}
 
 	String[] parse(String line) {
