@@ -8,6 +8,7 @@ public class LineParser {
 
 	public static final char SPACE = ' ';
 	public static final char SINGLE = '\'';
+	public static final char DOUBLE = '"';
 
 	private final CharacterIterator iterator;
 	private final StringBuilder stringBuilder;
@@ -29,6 +30,7 @@ public class LineParser {
 					}
 				}
 				case SINGLE -> singleQuote();
+				case DOUBLE -> doubleQuote();
 				default -> stringBuilder.append(character);
 			}
 		}
@@ -43,6 +45,13 @@ public class LineParser {
 	private void singleQuote() {
 		char character;
 		while ((character = iterator.next()) != CharacterIterator.DONE && character != SINGLE) {
+			stringBuilder.append(character);
+		}
+	}
+
+	private void doubleQuote() {
+		char character;
+		while ((character = iterator.next()) != CharacterIterator.DONE && character != DOUBLE) {
 			stringBuilder.append(character);
 		}
 	}
