@@ -61,25 +61,19 @@ public class LineParser {
 		}
 	}
 
-	private void backslash(boolean strict) {
+	private void backslash(boolean inQuote) {
 		char character = iterator.next();
 
 		if (character == CharacterIterator.DONE) {
 			return;
 		}
 
-		if (strict && isBackslashKept(character)) {
+		if (inQuote) {
 			stringBuilder.append(BACKSLASH);
+			stringBuilder.append(character);
+		} else {
+			stringBuilder.append(character);
 		}
-
-		stringBuilder.append(character);
-	}
-
-	private boolean isBackslashKept(char character) {
-		return switch (character) {
-			case SPACE -> true;
-			default -> false;
-		};
 	}
 
 }
