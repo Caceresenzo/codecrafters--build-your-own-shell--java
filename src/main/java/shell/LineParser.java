@@ -23,8 +23,10 @@ public class LineParser {
 		for (char character = iterator.first(); character != CharacterIterator.DONE; character = iterator.next()) {
 			switch (character) {
 				case SPACE -> {
-					strings.add(stringBuilder.toString());
-					stringBuilder.setLength(0);
+					if (!stringBuilder.isEmpty()) {
+						strings.add(stringBuilder.toString());
+						stringBuilder.setLength(0);
+					}
 				}
 				case SINGLE -> singleQuote();
 				default -> stringBuilder.append(character);
