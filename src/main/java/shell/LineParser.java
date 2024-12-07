@@ -9,6 +9,7 @@ public class LineParser {
 	public static final char SPACE = ' ';
 	public static final char SINGLE = '\'';
 	public static final char DOUBLE = '"';
+	public static final char BACKSLASH = '\\';
 
 	private final CharacterIterator iterator;
 	private final StringBuilder stringBuilder;
@@ -31,6 +32,7 @@ public class LineParser {
 				}
 				case SINGLE -> singleQuote();
 				case DOUBLE -> doubleQuote();
+				case BACKSLASH -> backslash(false);
 				default -> stringBuilder.append(character);
 			}
 		}
@@ -52,8 +54,32 @@ public class LineParser {
 	private void doubleQuote() {
 		char character;
 		while ((character = iterator.next()) != CharacterIterator.DONE && character != DOUBLE) {
-			stringBuilder.append(character);
+			switch (character) {
+				case BACKSLASH -> backslash(true);
+				default -> stringBuilder.append(character);
+			}
 		}
+	}
+
+	private void backslash(boolean strict) {
+		char character = iterator.next();
+
+		if (character == CharacterIterator.DONE) {
+			return;
+		}
+
+		if (strict && isBackslashKept(character)) {
+			stringBuilder.append(BACKSLASH);
+		}
+
+		stringBuilder.append(character);
+	}
+
+	private boolean isBackslashKept(char character) {
+		return switch (character) {
+			case SPACE -> true;
+			default -> false;
+		};
 	}
 
 }
