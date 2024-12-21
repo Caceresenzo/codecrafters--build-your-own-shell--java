@@ -9,6 +9,7 @@ import lombok.Getter;
 import shell.command.Command;
 import shell.command.Executable;
 import shell.command.builtin.Builtin;
+import shell.command.builtin.Cat;
 import shell.command.builtin.Cd;
 import shell.command.builtin.Echo;
 import shell.command.builtin.Exit;
@@ -24,17 +25,18 @@ public class Shell {
 		"echo", Echo.INSTANCE,
 		"type", Type.INSTANCE,
 		"pwd", Pwd.INSTANCE,
-		"cd", Cd.INSTANCE
+		"cd", Cd.INSTANCE,
+		"cat", Cat.INSTANCE
 	);
 
 	private @Getter Path workingDirectory = Path.of(".").toAbsolutePath().normalize();
 
-	public Command find(String program) {
+	public Command find(String program, boolean isForType) {
 		final var builtin = builtins.get(program);
-		if (builtin != null) {
+		if (builtin != null && (!isForType || builtin.acceptForType())) {
 			return builtin;
 		}
-		
+
 		if (IS_WINDOWS) {
 			program = program.replace('\\', '/');
 		}

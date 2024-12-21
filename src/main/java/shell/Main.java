@@ -38,7 +38,7 @@ public class Main {
 		final var arguments = parsedLine.arguments();
 		final var program = arguments.getFirst();
 
-		final var command = shell.find(program);
+		final var command = shell.find(program, false);
 		if (command != null) {
 			try (final var redirectStreams = RedirectStreams.from(parsedLine.redirects())) {
 				command.execute(shell, arguments, redirectStreams);
