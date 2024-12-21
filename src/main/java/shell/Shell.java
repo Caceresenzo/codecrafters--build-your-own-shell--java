@@ -34,6 +34,10 @@ public class Shell {
 		if (builtin != null) {
 			return builtin;
 		}
+		
+		if (IS_WINDOWS) {
+			program = program.replace('\\', '/');
+		}
 
 		final var separator = IS_WINDOWS ? ";" : ":";
 		final var paths = System.getenv("PATH").split(separator);

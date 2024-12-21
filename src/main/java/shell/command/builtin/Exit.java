@@ -1,13 +1,16 @@
 package shell.command.builtin;
 
+import java.util.List;
+
 import shell.Shell;
+import shell.io.RedirectStreams;
 
 public enum Exit implements Builtin {
 
 	INSTANCE;
 
 	@Override
-	public void execute(Shell shell, String[] arguments) {
+	public void execute(Shell shell, List<String> arguments, RedirectStreams redirectStreams) {
 		System.exit(0);
 	}
 

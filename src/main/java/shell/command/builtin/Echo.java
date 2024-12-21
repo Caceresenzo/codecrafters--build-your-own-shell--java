@@ -1,21 +1,22 @@
 package shell.command.builtin;
 
-import java.util.Arrays;
+import java.util.List;
 import java.util.stream.Collectors;
 
 import shell.Shell;
+import shell.io.RedirectStreams;
 
 public enum Echo implements Builtin {
 
 	INSTANCE;
 
 	@Override
-	public void execute(Shell shell, String[] arguments) {
-		final var line = Arrays.stream(arguments)
+	public void execute(Shell shell, List<String> arguments, RedirectStreams redirectStreams) {
+		final var line = arguments.stream()
 			.skip(1)
 			.collect(Collectors.joining(" "));
 
-		System.out.println(line);
+		redirectStreams.output().println(line);
 	}
 
 }
