@@ -14,8 +14,6 @@ public record Executable(
 	Path path
 ) implements Command {
 
-	static int times = 0;
-
 	@SneakyThrows
 	@Override
 	public void execute(Shell shell, List<String> arguments, RedirectStreams redirectStreams) {
@@ -26,10 +24,6 @@ public record Executable(
 					arguments.stream().skip(1)
 				)
 				.toList();
-
-			//			if (++times == 4) {
-			//				System.err.println(commandArguments);
-			//			}
 
 			final var builder = new ProcessBuilder(commandArguments)
 				.inheritIO()

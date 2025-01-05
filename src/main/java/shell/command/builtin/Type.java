@@ -13,7 +13,7 @@ public enum Type implements Builtin {
 	@Override
 	public void execute(Shell shell, List<String> arguments, RedirectStreams redirectStreams) {
 		final var program = arguments.get(1);
-		final var command = shell.find(program, true);
+		final var command = shell.find(program);
 
 		if (command instanceof Builtin) {
 			redirectStreams.output().println("%s is a shell builtin".formatted(program));
