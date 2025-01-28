@@ -28,6 +28,10 @@ public class Main {
 		System.out.print("$ ");
 	}
 
+	public static void bell() {
+		System.out.print((char) 0x7);
+	}
+
 	@SneakyThrows
 	public static String read(Shell shell) {
 		final var autocompleter = new Autocompleter();
@@ -63,7 +67,13 @@ public class Main {
 					}
 
 					case '\t': {
-						autocompleter.autocomplete(shell, line);
+						switch (autocompleter.autocomplete(shell, line)) {
+							case NONE -> {
+								bell();
+							}
+							case FOUND -> {}
+							case MORE -> {}
+						};
 
 						break;
 					}
