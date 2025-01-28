@@ -20,7 +20,8 @@ public record Executable(
 		try {
 			final var commandArguments = Stream
 				.concat(
-					Stream.of(path.toString()),
+					/* stupid but java does not allow custom arg0 */
+					Stream.of(path.getFileName().toString()),
 					arguments.stream().skip(1)
 				)
 				.toList();
