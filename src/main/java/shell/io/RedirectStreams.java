@@ -20,7 +20,6 @@ public record RedirectStreams(
 		RedirectStream error = new RedirectStream.Standard(StandardNamedStream.ERROR, System.err);
 
 		for (final var redirect : redirects) {
-			@SuppressWarnings("resource")
 			final var stream = new RedirectStream.File(redirect.path(), redirect.append());
 
 			switch (redirect.namedStream()) {
