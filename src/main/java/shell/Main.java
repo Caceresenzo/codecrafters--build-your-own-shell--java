@@ -1,6 +1,7 @@
 package shell;
 
 import lombok.SneakyThrows;
+import shell.autocomplete.Autocompleter;
 import shell.io.RedirectStreams;
 import shell.parse.LineParser;
 import shell.terminal.Termios;
@@ -11,7 +12,7 @@ public class Main {
 		Shell shell = new Shell();
 
 		while (true) {
-			final var line = read();
+			final var line = read(shell);
 
 			if (line == null) {
 				break;
@@ -28,7 +29,9 @@ public class Main {
 	}
 
 	@SneakyThrows
-	public static String read() {
+	public static String read(Shell shell) {
+		final var autocompleter = new Autocompleter();
+
 		try (final var scope = Termios.enableRawMode()) {
 			prompt();
 
@@ -57,6 +60,12 @@ public class Main {
 						System.out.print('\n');
 
 						return line.toString();
+					}
+
+					case '\t': {
+						autocompleter.autocomplete(shell, line);
+
+						break;
 					}
 
 					case 0x1b: {

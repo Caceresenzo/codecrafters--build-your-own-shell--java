@@ -19,6 +19,7 @@ public class Shell {
 
 	public static final boolean IS_WINDOWS = System.getProperty("os.name").startsWith("Windows");
 
+	@Getter
 	public final Map<String, Builtin> builtins = Map.of(
 		"exit", Exit.INSTANCE,
 		"echo", Echo.INSTANCE,
