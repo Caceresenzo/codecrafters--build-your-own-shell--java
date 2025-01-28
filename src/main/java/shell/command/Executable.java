@@ -1,6 +1,5 @@
 package shell.command;
 
-import java.nio.file.Path;
 import java.util.List;
 import java.util.stream.Stream;
 
@@ -11,7 +10,7 @@ import shell.io.RedirectStreams;
 import shell.io.StandardNamedStream;
 
 public record Executable(
-	Path path
+	String name
 ) implements Command {
 
 	@SneakyThrows
@@ -20,7 +19,7 @@ public record Executable(
 		try {
 			final var commandArguments = Stream
 				.concat(
-					Stream.of(path.toString()),
+					Stream.of(name.toString()),
 					arguments.stream().skip(1)
 				)
 				.toList();

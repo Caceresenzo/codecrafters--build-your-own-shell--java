@@ -34,7 +34,7 @@ public class Shell {
 		if (builtin != null) {
 			return builtin;
 		}
-		
+
 		if (IS_WINDOWS) {
 			program = program.replace('\\', '/');
 		}
@@ -46,7 +46,7 @@ public class Shell {
 			final var path = Paths.get(directory, program).normalize().toAbsolutePath();
 
 			if (Files.exists(path)) {
-				return new Executable(path);
+				return new Executable(path.getFileName().toString());
 			}
 		}
 
