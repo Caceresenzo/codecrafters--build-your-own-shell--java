@@ -19,7 +19,7 @@ public class Autocompleter {
 		BuiltinCompletionResolver.INSTANCE
 	);
 
-	public void autocomplete(Shell shell, StringBuilder line) {
+	public Result autocomplete(Shell shell, StringBuilder line) {
 		final var beginning = line.toString();
 
 		final var candidates = resolvers.stream()
@@ -29,14 +29,18 @@ public class Autocompleter {
 			.collect(Collectors.toCollection(() -> new TreeSet<>(SHORTEST_FIRST)));
 
 		if (candidates.isEmpty()) {
-			return;
+			return Result.NONE;
 		}
 
 		if (candidates.size() == 1) {
 			final var candidate = candidates.first();
 
 			writeCandidate(line, candidate);
+
+			return Result.FOUND;
 		}
+
+		return Result.MORE;
 	}
 
 	private void writeCandidate(StringBuilder line, String candidate) {
@@ -45,6 +49,14 @@ public class Autocompleter {
 
 		line.append(' ');
 		System.out.print(' ');
+	}
+
+	public enum Result {
+
+		NONE,
+		FOUND,
+		MORE;
+
 	}
 
 }
