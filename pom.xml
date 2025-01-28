@@ -17,9 +17,20 @@
 
 	<dependencies>
 		<dependency>
+			<groupId>net.java.dev.jna</groupId>
+			<artifactId>jna</artifactId>
+			<version>5.16.0</version>
+		</dependency>
+		<dependency>
+			<groupId>net.java.dev.jna</groupId>
+			<artifactId>jna-platform</artifactId>
+			<version>5.16.0</version>
+		</dependency>
+	
+		<dependency>
 			<groupId>org.projectlombok</groupId>
 			<artifactId>lombok</artifactId>
-			<version>1.18.32</version>
+			<version>1.18.36</version>
 			<scope>provided</scope>
 		</dependency>
 		
@@ -39,12 +50,24 @@
 
 	<build>
 		<plugins>
+	        <plugin>
+	            <groupId>org.apache.maven.plugins</groupId>
+	            <artifactId>maven-compiler-plugin</artifactId>
+	            <configuration>
+	                <annotationProcessorPaths>
+	                    <annotationProcessorPath>
+	                        <groupId>org.projectlombok</groupId>
+	                        <artifactId>lombok</artifactId>
+	                        <version>1.18.36</version>
+	                    </annotationProcessorPath>
+	                </annotationProcessorPaths>
+	            </configuration>
+	        </plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-assembly-plugin</artifactId>
 				<configuration>
-					<finalName>java_shell</finalName> <!-- Please do not change
-					this final artifact name-->
+					<finalName>java_shell</finalName> <!-- Please do not change this final artifact name-->
 					<descriptorRefs>
 						<descriptorRef>jar-with-dependencies</descriptorRef>
 					</descriptorRefs>
@@ -52,8 +75,7 @@
 					<archive>
 						<manifest>
 							<addClasspath>true</addClasspath>
-							<!-- This is the main class of your program which
-							will be executed-->
+							<!-- This is the main class of your program which will be executed-->
 							<mainClass>shell.Main</mainClass>
 						</manifest>
 					</archive>
