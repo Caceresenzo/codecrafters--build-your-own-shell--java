@@ -40,10 +40,7 @@ public class Shell {
 			program = program.replace('\\', '/');
 		}
 
-		final var separator = IS_WINDOWS ? ";" : ":";
-		final var paths = System.getenv("PATH").split(separator);
-
-		for (final var directory : paths) {
+		for (final var directory : get$PATH()) {
 			final var path = Paths.get(directory, program).normalize().toAbsolutePath();
 
 			if (Files.exists(path)) {
@@ -61,6 +58,12 @@ public class Shell {
 
 		workingDirectory = path;
 		return true;
+	}
+
+	public String[] get$PATH() {
+		final var separator = IS_WINDOWS ? ";" : ":";
+
+		return System.getenv("PATH").split(separator);
 	}
 
 }

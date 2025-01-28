@@ -9,6 +9,7 @@ import java.util.stream.Collectors;
 import lombok.Getter;
 import shell.Shell;
 import shell.autocomplete.impl.BuiltinCompletionResolver;
+import shell.autocomplete.impl.ExecutableCompletionResolver;
 
 public class Autocompleter {
 
@@ -16,11 +17,15 @@ public class Autocompleter {
 
 	@Getter
 	public final List<CompletionResolver> resolvers = List.of(
-		BuiltinCompletionResolver.INSTANCE
+		BuiltinCompletionResolver.INSTANCE,
+		ExecutableCompletionResolver.INSTANCE
 	);
 
 	public Result autocomplete(Shell shell, StringBuilder line) {
 		final var beginning = line.toString();
+		if (beginning.isBlank()) {
+			return Result.FOUND;
+		}
 
 		final var candidates = resolvers.stream()
 			.map((resolver) -> resolver.getCompletions(shell, beginning))
