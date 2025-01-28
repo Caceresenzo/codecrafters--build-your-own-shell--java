@@ -34,7 +34,7 @@ public class Shell {
 		if (builtin != null) {
 			return builtin;
 		}
-		
+
 		if (IS_WINDOWS) {
 			program = program.replace('\\', '/');
 		}
