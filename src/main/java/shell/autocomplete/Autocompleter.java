@@ -2,6 +2,7 @@ package shell.autocomplete;
 
 import java.util.Comparator;
 import java.util.List;
+import java.util.SequencedSet;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.stream.Collectors;
@@ -41,9 +42,16 @@ public class Autocompleter {
 		if (candidates.size() == 1) {
 			final var candidate = candidates.first();
 
-			writeCandidate(line, candidate);
+			writeCandidate(line, candidate, false);
 
 			return Result.FOUND;
+		}
+
+		final var prefix = findSharedPrefix(candidates);
+		if (!prefix.isEmpty()) {
+			writeCandidate(line, prefix, true);
+
+			return Result.MORE;
 		}
 
 		if (bellRang) {
@@ -62,12 +70,45 @@ public class Autocompleter {
 		return Result.MORE;
 	}
 
-	private void writeCandidate(StringBuilder line, String candidate) {
+	private static String findSharedPrefix(SequencedSet<String> candidates) {
+		final var first = candidates.getFirst();
+		if (first.isEmpty()) {
+			return "";
+		}
+
+		var end = 0;
+		for (; end < first.length(); ++end) {
+			var oneIsNotMatching = false;
+
+			final var iterator = candidates.iterator();
+			iterator.next(); /* skip first */
+
+			while (iterator.hasNext()) {
+				final var candidate = iterator.next();
+
+				if (!first.subSequence(0, end).equals(candidate.subSequence(0, end))) {
+					oneIsNotMatching = true;
+					break;
+				}
+			}
+
+			if (oneIsNotMatching) {
+				end -= 1;
+				break;
+			}
+		}
+
+		return first.substring(0, end);
+	}
+
+	private void writeCandidate(StringBuilder line, String candidate, boolean hasMore) {
 		line.append(candidate);
 		System.out.print(candidate);
 
-		line.append(' ');
-		System.out.print(' ');
+		if (!hasMore) {
+			line.append(' ');
+			System.out.print(' ');
+		}
 	}
 
 	public enum Result {
