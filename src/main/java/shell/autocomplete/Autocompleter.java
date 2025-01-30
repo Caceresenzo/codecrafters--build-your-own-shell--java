@@ -7,6 +7,7 @@ import java.util.TreeSet;
 import java.util.stream.Collectors;
 
 import lombok.Getter;
+import shell.Main;
 import shell.Shell;
 import shell.autocomplete.impl.BuiltinCompletionResolver;
 import shell.autocomplete.impl.ExecutableCompletionResolver;
@@ -21,7 +22,7 @@ public class Autocompleter {
 		ExecutableCompletionResolver.INSTANCE
 	);
 
-	public Result autocomplete(Shell shell, StringBuilder line) {
+	public Result autocomplete(Shell shell, StringBuilder line, boolean bellRang) {
 		final var beginning = line.toString();
 		if (beginning.isBlank()) {
 			return Result.FOUND;
@@ -43,6 +44,19 @@ public class Autocompleter {
 			writeCandidate(line, candidate);
 
 			return Result.FOUND;
+		}
+
+		if (bellRang) {
+			System.out.print(
+				candidates.stream()
+					.map(beginning::concat)
+					.collect(Collectors.joining("  ", "\n", "\n"))
+			);
+
+			Main.prompt();
+
+			System.out.print(beginning);
+			System.out.flush();
 		}
 
 		return Result.MORE;

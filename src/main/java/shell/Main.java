@@ -38,6 +38,8 @@ public class Main {
 
 		try (final var scope = Termios.enableRawMode()) {
 			prompt();
+			
+			var bellRang = false;
 
 			final var line = new StringBuilder();
 			while (true) {
@@ -67,12 +69,18 @@ public class Main {
 					}
 
 					case '\t': {
-						switch (autocompleter.autocomplete(shell, line)) {
+						switch (autocompleter.autocomplete(shell, line, bellRang)) {
 							case NONE -> {
+								bellRang = false;
 								bell();
 							}
-							case FOUND -> {}
-							case MORE -> {}
+							case FOUND -> {
+								bellRang = false;
+							}
+							case MORE -> {
+								bellRang = true;
+								bell();
+							}
 						};
 
 						break;
