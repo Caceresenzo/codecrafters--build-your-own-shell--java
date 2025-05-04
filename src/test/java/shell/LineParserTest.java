@@ -9,7 +9,7 @@ import org.junit.jupiter.api.Test;
 
 import shell.io.StandardNamedStream;
 import shell.parse.LineParser;
-import shell.parse.ParsedLine;
+import shell.parse.ParsedCommand;
 import shell.parse.Redirect;
 
 class LineParserTest {
@@ -50,7 +50,7 @@ class LineParserTest {
 			.containsExactly(new Redirect(StandardNamedStream.OUTPUT, Path.of("out.txt"), true));
 
 		assertThat(parse("echo a >> out.txt > out2.txt"))
-			.isEqualTo(new ParsedLine(
+			.isEqualTo(new ParsedCommand(
 				List.of("echo", "a"),
 				List.of(
 					new Redirect(StandardNamedStream.OUTPUT, Path.of("out.txt"), true),
@@ -65,12 +65,12 @@ class LineParserTest {
 			.containsExactly(new Redirect(StandardNamedStream.ERROR, Path.of("out.txt"), false));
 	}
 
-	ParsedLine parse(String line) {
-		return new LineParser(line).parse();
+	ParsedCommand parse(String line) {
+		return new LineParser(line).parse().getFirst();
 	}
 
 	List<String> parseArguments(String line) {
-		return new LineParser(line).parse().arguments();
+		return new LineParser(line).parse().getFirst().arguments();
 	}
 
 }
