@@ -1,7 +1,7 @@
 package shell.command.builtin;
 
-import shell.command.Command;
+import shell.command.Executable;
 
-public interface Builtin extends Command {
+public interface Builtin extends Executable {
 
 }

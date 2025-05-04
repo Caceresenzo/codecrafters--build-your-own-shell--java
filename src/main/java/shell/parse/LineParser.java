@@ -15,17 +15,20 @@ public class LineParser {
 	public static final char DOUBLE = '"';
 	public static final char BACKSLASH = '\\';
 	public static final char GREATER_THAN = '>';
+	public static final char PIPE = '|';
 
 	private final CharacterIterator iterator;
 
-	private final List<String> arguments = new ArrayList<>();
-	private final List<Redirect> redirects = new ArrayList<>();
+	private final List<ParsedCommand> commands = new ArrayList<>();
+
+	private List<String> arguments = new ArrayList<>();
+	private List<Redirect> redirects = new ArrayList<>();
 
 	public LineParser(String line) {
 		this.iterator = new StringCharacterIterator(line);
 	}
 
-	public ParsedLine parse() {
+	public List<ParsedCommand> parse() {
 		String argument;
 
 		iterator.first();
@@ -33,7 +36,11 @@ public class LineParser {
 			arguments.add(argument);
 		}
 
-		return new ParsedLine(arguments, redirects);
+		if (!arguments.isEmpty()) {
+			commands.add(new ParsedCommand(arguments, redirects));
+		}
+
+		return commands;
 	}
 
 	private String nextArgument() {
@@ -50,6 +57,7 @@ public class LineParser {
 				case DOUBLE -> doubleQuote(stringBuilder);
 				case BACKSLASH -> backslash(stringBuilder, false);
 				case GREATER_THAN -> redirect(StandardNamedStream.OUTPUT);
+				case PIPE -> pipe();
 				default -> {
 					if (Character.isDigit(character) && peek() == GREATER_THAN) {
 						iterator.next();
@@ -131,6 +139,13 @@ public class LineParser {
 			Path.of(path),
 			append
 		));
+	}
+
+	private void pipe() {
+		commands.add(new ParsedCommand(arguments, redirects));
+
+		arguments = new ArrayList<>();
+		redirects = new ArrayList<>();
 	}
 
 	public char peek() {
