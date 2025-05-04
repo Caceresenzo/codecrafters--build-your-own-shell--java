@@ -6,7 +6,7 @@ import java.nio.file.Paths;
 import java.util.Map;
 
 import lombok.Getter;
-import shell.command.Command;
+import shell.command.Binary;
 import shell.command.Executable;
 import shell.command.builtin.Builtin;
 import shell.command.builtin.Cd;
@@ -30,8 +30,12 @@ public class Shell {
 
 	private @Getter Path workingDirectory = Path.of(".").toAbsolutePath().normalize();
 
-	public Command find(String program) {
-		final var builtin = builtins.get(program);
+	public Builtin whichBuiltin(String name) {
+		return builtins.get(name);
+	}
+
+	public Executable which(String program) {
+		final var builtin = whichBuiltin(program);
 		if (builtin != null) {
 			return builtin;
 		}
@@ -44,7 +48,7 @@ public class Shell {
 			final var path = Paths.get(directory, program).normalize().toAbsolutePath();
 
 			if (Files.exists(path)) {
-				return new Executable(path);
+				return new Binary(path);
 			}
 		}
 
