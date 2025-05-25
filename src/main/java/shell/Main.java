@@ -157,6 +157,8 @@ public class Main {
 
 	@SneakyThrows
 	public static void eval(Shell shell, String line) {
+		shell.getHistory().add(line);
+
 		final var commands = new LineParser(line).parse();
 
 		if (commands.isEmpty()) {
