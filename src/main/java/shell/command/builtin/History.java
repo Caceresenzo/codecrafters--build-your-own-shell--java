@@ -11,9 +11,15 @@ public enum History implements Builtin {
 
 	@Override
 	public void execute(Shell shell, List<String> arguments, RedirectStreams redirectStreams) {
-		final var lines = shell.getHistory();
+		var lines = shell.getHistory();
 
-		var index = 0;
+		final var start = Math.max(0, arguments.size() < 2 ? 0 : Integer.parseInt(arguments.get(1)));
+		if (start != 0) {
+			final var size = lines.size();
+			lines = lines.subList(size - start, size);
+		}
+
+		var index = start;
 		for (final var line : lines) {
 			++index;
 			redirectStreams.output().println("%5d  %s".formatted(index, line));
