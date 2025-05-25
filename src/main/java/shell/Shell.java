@@ -3,6 +3,8 @@ package shell;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 import lombok.Getter;
@@ -31,6 +33,7 @@ public class Shell {
 	);
 
 	private @Getter Path workingDirectory = Path.of(".").toAbsolutePath().normalize();
+	private @Getter List<String> history = new ArrayList<>();
 
 	public Builtin whichBuiltin(String name) {
 		return builtins.get(name);
