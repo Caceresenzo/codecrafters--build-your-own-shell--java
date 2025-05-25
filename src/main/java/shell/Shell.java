@@ -12,6 +12,7 @@ import shell.command.builtin.Builtin;
 import shell.command.builtin.Cd;
 import shell.command.builtin.Echo;
 import shell.command.builtin.Exit;
+import shell.command.builtin.History;
 import shell.command.builtin.Pwd;
 import shell.command.builtin.Type;
 
@@ -25,7 +26,8 @@ public class Shell {
 		"echo", Echo.INSTANCE,
 		"type", Type.INSTANCE,
 		"pwd", Pwd.INSTANCE,
-		"cd", Cd.INSTANCE
+		"cd", Cd.INSTANCE,
+		"history", History.INSTANCE
 	);
 
 	private @Getter Path workingDirectory = Path.of(".").toAbsolutePath().normalize();
