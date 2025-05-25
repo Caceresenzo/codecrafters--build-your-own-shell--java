@@ -24,13 +24,14 @@ public class Main {
 	public static final String BUILTIN_OPTION = "--builtin";
 
 	private static char UP = 'A';
+	private static char DOWN = 'B';
 
 	@SneakyThrows
 	public static void main(String[] args) {
 		final var shell = new Shell();
-		//		shell.getHistory().add("111");
-		//		shell.getHistory().add("222");
-		//		shell.getHistory().add("333");
+		shell.getHistory().add("111");
+		shell.getHistory().add("222");
+		shell.getHistory().add("333");
 
 		final var builtinOption = new Option(null, BUILTIN_OPTION.substring(2), true, "run a builtin");
 		builtinOption.setArgs(Option.UNLIMITED_VALUES);
@@ -142,6 +143,14 @@ public class Main {
 						if (UP == direction && historyPosition != 0) {
 							--historyPosition;
 							promptLength = changeLine(line, historyLines.get(historyPosition), promptLength);
+						} else if (DOWN == direction && historyPosition < historyLines.size()) {
+							++historyPosition;
+
+							if (historyPosition == historyLines.size()) {
+								promptLength = changeLine(line, "", promptLength);
+							} else {
+								promptLength = changeLine(line, historyLines.get(historyPosition), promptLength);
+							}
 						}
 
 						break;
