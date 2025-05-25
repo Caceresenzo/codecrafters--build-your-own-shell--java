@@ -23,12 +23,14 @@ public class Main {
 
 	public static final String BUILTIN_OPTION = "--builtin";
 
+	private static char UP = 'A';
+
 	@SneakyThrows
 	public static void main(String[] args) {
 		final var shell = new Shell();
-		//		shell.getHistory().add("111");
-		//		shell.getHistory().add("222");
-		//		shell.getHistory().add("333");
+		shell.getHistory().add("111");
+		shell.getHistory().add("222");
+		shell.getHistory().add("333");
 
 		final var builtinOption = new Option(null, BUILTIN_OPTION.substring(2), true, "run a builtin");
 		builtinOption.setArgs(Option.UNLIMITED_VALUES);
@@ -65,8 +67,10 @@ public class Main {
 		}
 	}
 
-	public static void prompt() {
-		System.out.print("$ ");
+	public static int prompt() {
+		final var prompt = "$ ";
+		System.out.print(prompt);
+		return prompt.length();
 	}
 
 	public static void bell() {
@@ -76,13 +80,17 @@ public class Main {
 	@SneakyThrows
 	public static String read(Shell shell) {
 		final var autocompleter = new Autocompleter();
+		final var line = new StringBuilder();
+
+		var promptLength = 0;
+		var bellRang = false;
+
+		final var historyLines = shell.getHistory();
+		var historyPosition = historyLines.size();
 
 		try (final var scope = Termios.enableRawMode()) {
-			prompt();
+			promptLength = prompt();
 
-			var bellRang = false;
-
-			final var line = new StringBuilder();
 			while (true) {
 				final var input = System.in.read();
 				if (input == -1) {
@@ -129,7 +137,12 @@ public class Main {
 
 					case 0x1b: {
 						System.in.read(); // '['
-						System.in.read(); // 'A' or 'B' or 'C' or 'D'
+
+						final var direction = System.in.read();
+						if (UP == direction && historyPosition != 0) {
+							--historyPosition;
+							promptLength = changeLine(line, historyLines.get(historyPosition), promptLength);
+						}
 
 						break;
 					}
@@ -156,6 +169,19 @@ public class Main {
 				}
 			}
 		}
+	}
+
+	private static int changeLine(StringBuilder currentLine, String newLine, int promptLength) {
+		final var clear = "\r" + " ".repeat(currentLine.length() + promptLength) + "\r";
+		System.out.print(clear);
+
+		promptLength = prompt();
+		System.out.print(newLine);
+
+		currentLine.setLength(0);
+		currentLine.append(newLine);
+
+		return promptLength;
 	}
 
 	@SneakyThrows
