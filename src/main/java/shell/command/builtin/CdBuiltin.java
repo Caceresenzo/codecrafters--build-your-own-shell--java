@@ -6,7 +6,7 @@ import java.util.List;
 import shell.Shell;
 import shell.io.RedirectStreams;
 
-public enum Cd implements Builtin {
+public enum CdBuiltin implements Builtin {
 
 	INSTANCE;
 

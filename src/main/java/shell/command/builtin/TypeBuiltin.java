@@ -6,7 +6,7 @@ import shell.Shell;
 import shell.command.Binary;
 import shell.io.RedirectStreams;
 
-public enum Type implements Builtin {
+public enum TypeBuiltin implements Builtin {
 
 	INSTANCE;
 
