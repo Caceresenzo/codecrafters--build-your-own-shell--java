@@ -32,7 +32,7 @@ public class Shell {
 	);
 
 	private @Getter Path workingDirectory = Path.of(".").toAbsolutePath().normalize();
-	private @Getter History history = new History();
+	private @Getter History history = new History(this);
 
 	public Builtin whichBuiltin(String name) {
 		return builtins.get(name);

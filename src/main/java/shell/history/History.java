@@ -7,12 +7,23 @@ import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
 import java.util.List;
 
+import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
+import shell.Shell;
 
+@RequiredArgsConstructor
 public class History {
 
 	private final List<String> previousLines = new ArrayList<>();
 	private int lastAppendIndex = 0;
+
+	public History(Shell shell) {
+		final var histfile = get$HISTFILE();
+		if (histfile != null) {
+			final var path = shell.getWorkingDirectory().resolve(histfile);
+			readFrom(path);
+		}
+	}
 
 	public int size() {
 		return previousLines.size();
@@ -55,6 +66,10 @@ public class History {
 		Files.write(path, previousLines.subList(lastAppendIndex, size), StandardOpenOption.CREATE, StandardOpenOption.APPEND);
 
 		lastAppendIndex = size;
+	}
+
+	public String get$HISTFILE() {
+		return System.getenv("HISTFILE");
 	}
 
 }
