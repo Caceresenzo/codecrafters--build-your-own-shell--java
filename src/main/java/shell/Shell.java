@@ -3,20 +3,19 @@ package shell;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 
 import lombok.Getter;
 import shell.command.Binary;
 import shell.command.Executable;
 import shell.command.builtin.Builtin;
-import shell.command.builtin.Cd;
-import shell.command.builtin.Echo;
-import shell.command.builtin.Exit;
-import shell.command.builtin.History;
-import shell.command.builtin.Pwd;
-import shell.command.builtin.Type;
+import shell.command.builtin.CdBuiltin;
+import shell.command.builtin.EchoBuiltin;
+import shell.command.builtin.ExitBuiltin;
+import shell.command.builtin.HistoryBuiltin;
+import shell.command.builtin.PwdBuiltin;
+import shell.command.builtin.TypeBuiltin;
+import shell.history.History;
 
 public class Shell {
 
@@ -24,16 +23,16 @@ public class Shell {
 
 	@Getter
 	public final Map<String, Builtin> builtins = Map.of(
-		"exit", Exit.INSTANCE,
-		"echo", Echo.INSTANCE,
-		"type", Type.INSTANCE,
-		"pwd", Pwd.INSTANCE,
-		"cd", Cd.INSTANCE,
-		"history", History.INSTANCE
+		"exit", ExitBuiltin.INSTANCE,
+		"echo", EchoBuiltin.INSTANCE,
+		"type", TypeBuiltin.INSTANCE,
+		"pwd", PwdBuiltin.INSTANCE,
+		"cd", CdBuiltin.INSTANCE,
+		"history", HistoryBuiltin.INSTANCE
 	);
 
 	private @Getter Path workingDirectory = Path.of(".").toAbsolutePath().normalize();
-	private @Getter List<String> history = new ArrayList<>();
+	private @Getter History history = new History();
 
 	public Builtin whichBuiltin(String name) {
 		return builtins.get(name);
