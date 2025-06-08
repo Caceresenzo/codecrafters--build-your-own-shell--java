@@ -1,6 +1,7 @@
 package shell.command.builtin;
 
 import java.util.List;
+import java.util.OptionalInt;
 
 import shell.Shell;
 import shell.io.RedirectStreams;
@@ -10,31 +11,31 @@ public enum HistoryBuiltin implements Builtin {
 	INSTANCE;
 
 	@Override
-	public void execute(Shell shell, List<String> arguments, RedirectStreams redirectStreams) {
-		var history = shell.getHistory();
-
-		var start = 0;
-
+	public OptionalInt execute(Shell shell, List<String> arguments, RedirectStreams redirectStreams) {
 		final var first = arguments.size() > 1 ? arguments.get(1) : null;
 
 		if (first != null && first.matches("[\\d]+")) {
-			start = history.size() - Integer.parseInt(arguments.get(1));
+			final var start = shell.getHistory().size() - Integer.parseInt(arguments.get(1));
+
+			print(shell, redirectStreams, start);
 		} else if ("-r".equals(first)) {
 			final var path = shell.getWorkingDirectory().resolve(arguments.get(2));
 			shell.getHistory().readFrom(path);
-
-			return;
 		} else if ("-w".equals(first)) {
 			final var path = shell.getWorkingDirectory().resolve(arguments.get(2));
 			shell.getHistory().writeTo(path);
-
-			return;
 		} else if ("-a".equals(first)) {
 			final var path = shell.getWorkingDirectory().resolve(arguments.get(2));
 			shell.getHistory().appendTo(path);
-
-			return;
+		} else {
+			print(shell, redirectStreams, 0);
 		}
+
+		return OptionalInt.empty();
+	}
+
+	public void print(Shell shell, RedirectStreams redirectStreams, int start) {
+		var history = shell.getHistory();
 
 		for (var index = start; index < history.size(); ++index) {
 			final var line = history.get(index);
