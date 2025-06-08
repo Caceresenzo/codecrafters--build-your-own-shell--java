@@ -1,6 +1,7 @@
 package shell.command.builtin;
 
 import java.util.List;
+import java.util.OptionalInt;
 
 import shell.Shell;
 import shell.command.Binary;
@@ -11,7 +12,7 @@ public enum TypeBuiltin implements Builtin {
 	INSTANCE;
 
 	@Override
-	public void execute(Shell shell, List<String> arguments, RedirectStreams redirectStreams) {
+	public OptionalInt execute(Shell shell, List<String> arguments, RedirectStreams redirectStreams) {
 		final var program = arguments.get(1);
 		final var command = shell.which(program);
 
@@ -22,6 +23,8 @@ public enum TypeBuiltin implements Builtin {
 		} else {
 			redirectStreams.output().println("%s: not found".formatted(program));
 		}
+
+		return OptionalInt.empty();
 	}
 
 }

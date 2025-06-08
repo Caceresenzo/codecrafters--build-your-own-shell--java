@@ -6,23 +6,21 @@ import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
-import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import shell.Shell;
 
-@RequiredArgsConstructor
-public class History {
+public class History implements AutoCloseable {
 
+	private final Shell shell;
 	private final List<String> previousLines = new ArrayList<>();
 	private int lastAppendIndex = 0;
 
 	public History(Shell shell) {
-		final var histfile = get$HISTFILE();
-		if (histfile != null) {
-			final var path = shell.getWorkingDirectory().resolve(histfile);
-			readFrom(path);
-		}
+		this.shell = shell;
+
+		getStoragePath().ifPresent(this::readFrom);
 	}
 
 	public int size() {
@@ -68,8 +66,20 @@ public class History {
 		lastAppendIndex = size;
 	}
 
-	public String get$HISTFILE() {
-		return System.getenv("HISTFILE");
+	public Optional<Path> getStoragePath() {
+		final var histfile = System.getenv("HISTFILE");
+
+		if (histfile == null || histfile.isEmpty()) {
+			return Optional.empty();
+		}
+
+		final var path = shell.getWorkingDirectory().resolve(histfile);
+		return Optional.of(path);
+	}
+
+	@Override
+	public void close() {
+		getStoragePath().ifPresent(this::writeTo);
 	}
 
 }

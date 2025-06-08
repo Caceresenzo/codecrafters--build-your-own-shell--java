@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.OptionalInt;
 import java.util.stream.Stream;
 
 import org.apache.commons.cli.DefaultParser;
@@ -28,30 +29,40 @@ public class Main {
 
 	@SneakyThrows
 	public static void main(String[] args) {
-		final var shell = new Shell();
+		int exitCode = 0;
 
-		final var builtinOption = new Option(null, BUILTIN_OPTION.substring(2), true, "run a builtin");
-		builtinOption.setArgs(Option.UNLIMITED_VALUES);
+		try (
+			final var shell = new Shell()
+		) {
+			final var builtinOption = new Option(null, BUILTIN_OPTION.substring(2), true, "run a builtin");
+			builtinOption.setArgs(Option.UNLIMITED_VALUES);
 
-		final var options = new Options()
-			.addOption(builtinOption);
+			final var options = new Options()
+				.addOption(builtinOption);
 
-		final var cli = new DefaultParser().parse(options, args);
+			final var cli = new DefaultParser().parse(options, args);
 
-		if (cli.hasOption(builtinOption)) {
-			final var arguments = new ArrayList<>(Arrays.asList(cli.getOptionValues(builtinOption)));
+			if (cli.hasOption(builtinOption)) {
+				final var arguments = new ArrayList<>(Arrays.asList(cli.getOptionValues(builtinOption)));
 
-			final var name = arguments.removeFirst();
-			final var builtin = shell.whichBuiltin(name);
-			if (builtin == null) {
-				notFound(name);
-				System.exit(1);
+				final var name = arguments.removeFirst();
+				final var builtin = shell.whichBuiltin(name);
+				if (builtin == null) {
+					notFound(name);
+					System.exit(1);
+				}
+
+				builtin.execute(shell, arguments, RedirectStreams.standard());
+				return;
 			}
 
-			builtin.execute(shell, arguments, RedirectStreams.standard());
-			return;
+			exitCode = loop(shell);
 		}
+		
+		System.exit(exitCode);
+	}
 
+	public static int loop(Shell shell) {
 		while (true) {
 			final var line = read(shell);
 
@@ -60,9 +71,15 @@ public class Main {
 			} else if (line.isBlank()) {
 				continue;
 			} else {
-				eval(shell, line);
+				final var shellExitCode = eval(shell, line);
+
+				if (shellExitCode.isPresent()) {
+					return shellExitCode.getAsInt();
+				}
 			}
 		}
+
+		return 0;
 	}
 
 	public static int prompt() {
@@ -191,13 +208,13 @@ public class Main {
 	}
 
 	@SneakyThrows
-	public static void eval(Shell shell, String line) {
+	public static OptionalInt eval(Shell shell, String line) {
 		shell.getHistory().add(line);
 
 		final var commands = new LineParser(line).parse();
 
 		if (commands.isEmpty()) {
-			return;
+			return null;
 		} else if (commands.size() == 1) {
 			final var command = commands.getFirst();
 
@@ -206,7 +223,7 @@ public class Main {
 			final var executable = shell.which(program);
 			if (executable != null) {
 				try (final var redirectStreams = RedirectStreams.from(command.redirects())) {
-					executable.execute(shell, command.arguments(), redirectStreams);
+					return executable.execute(shell, command.arguments(), redirectStreams);
 				}
 			} else {
 				notFound(program);
@@ -214,6 +231,8 @@ public class Main {
 		} else {
 			pipeline(shell, commands);
 		}
+
+		return OptionalInt.empty();
 	}
 
 	private static void notFound(String program) {

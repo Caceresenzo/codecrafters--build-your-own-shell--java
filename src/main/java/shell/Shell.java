@@ -17,7 +17,7 @@ import shell.command.builtin.PwdBuiltin;
 import shell.command.builtin.TypeBuiltin;
 import shell.history.History;
 
-public class Shell {
+public class Shell implements AutoCloseable {
 
 	public static final boolean IS_WINDOWS = System.getProperty("os.name").startsWith("Windows");
 
@@ -72,6 +72,11 @@ public class Shell {
 		final var separator = IS_WINDOWS ? ";" : ":";
 
 		return System.getenv("PATH").split(separator);
+	}
+
+	@Override
+	public void close() {
+		history.close();
 	}
 
 }
