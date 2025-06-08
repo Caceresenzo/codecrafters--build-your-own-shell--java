@@ -6,7 +6,7 @@ import java.util.stream.Collectors;
 import shell.Shell;
 import shell.io.RedirectStreams;
 
-public enum Echo implements Builtin {
+public enum EchoBuiltin implements Builtin {
 
 	INSTANCE;
 
