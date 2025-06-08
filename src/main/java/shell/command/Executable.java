@@ -1,12 +1,13 @@
 package shell.command;
 
 import java.util.List;
+import java.util.OptionalInt;
 
 import shell.Shell;
 import shell.io.RedirectStreams;
 
 public interface Executable {
 
-	void execute(Shell shell, List<String> arguments, RedirectStreams redirectStreams);
+	OptionalInt execute(Shell shell, List<String> arguments, RedirectStreams redirectStreams);
 
 }

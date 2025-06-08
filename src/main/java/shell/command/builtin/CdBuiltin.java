@@ -2,6 +2,7 @@ package shell.command.builtin;
 
 import java.nio.file.Path;
 import java.util.List;
+import java.util.OptionalInt;
 
 import shell.Shell;
 import shell.io.RedirectStreams;
@@ -11,13 +12,15 @@ public enum CdBuiltin implements Builtin {
 	INSTANCE;
 
 	@Override
-	public void execute(Shell shell, List<String> arguments, RedirectStreams redirectStreams) {
+	public OptionalInt execute(Shell shell, List<String> arguments, RedirectStreams redirectStreams) {
 		final var path = arguments.get(1);
 		final var absolute = toAbsolute(shell, path).normalize().toAbsolutePath();
 
 		if (!shell.changeWorkingDirectory(absolute)) {
 			redirectStreams.error().println("cd: %s: No such file or directory".formatted(absolute));
 		}
+
+		return OptionalInt.empty();
 	}
 
 	public Path toAbsolute(Shell shell, String input) {

@@ -2,6 +2,7 @@ package shell.command;
 
 import java.nio.file.Path;
 import java.util.List;
+import java.util.OptionalInt;
 import java.util.stream.Stream;
 
 import lombok.SneakyThrows;
@@ -16,7 +17,7 @@ public record Binary(
 
 	@SneakyThrows
 	@Override
-	public void execute(Shell shell, List<String> arguments, RedirectStreams redirectStreams) {
+	public OptionalInt execute(Shell shell, List<String> arguments, RedirectStreams redirectStreams) {
 		try {
 			final var commandArguments = Stream
 				.concat(
