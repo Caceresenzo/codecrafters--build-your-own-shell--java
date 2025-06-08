@@ -12,17 +12,22 @@ public enum HistoryBuiltin implements Builtin {
 	@Override
 	public void execute(Shell shell, List<String> arguments, RedirectStreams redirectStreams) {
 		var history = shell.getHistory();
-		
+
 		var start = 0;
-		
+
 		final var first = arguments.size() > 1 ? arguments.get(1) : null;
-		
+
 		if (first != null && first.matches("[\\d]+")) {
 			start = history.size() - Integer.parseInt(arguments.get(1));
 		} else if ("-r".equals(first)) {
 			final var path = shell.getWorkingDirectory().resolve(arguments.get(2));
 			shell.getHistory().readFrom(path);
-			
+
+			return;
+		} else if ("-w".equals(first)) {
+			final var path = shell.getWorkingDirectory().resolve(arguments.get(2));
+			shell.getHistory().writeTo(path);
+
 			return;
 		}
 

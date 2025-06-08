@@ -3,6 +3,7 @@ package shell.history;
 import java.io.FileNotFoundException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -36,6 +37,11 @@ public class History {
 		for (final var line : lines) {
 			previousLines.add(line);
 		}
+	}
+
+	@SneakyThrows
+	public void writeTo(Path path) {
+		Files.write(path, previousLines, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
 	}
 
 }
