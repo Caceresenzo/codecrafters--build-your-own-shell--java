@@ -12,6 +12,7 @@ import lombok.SneakyThrows;
 public class History {
 
 	private final List<String> previousLines = new ArrayList<>();
+	private int lastAppendIndex = 0;
 
 	public int size() {
 		return previousLines.size();
@@ -42,6 +43,18 @@ public class History {
 	@SneakyThrows
 	public void writeTo(Path path) {
 		Files.write(path, previousLines, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
+	}
+
+	@SneakyThrows
+	public void appendTo(Path path) {
+		final var size = previousLines.size();
+		if (lastAppendIndex == size) {
+			return;
+		}
+
+		Files.write(path, previousLines.subList(lastAppendIndex, size), StandardOpenOption.CREATE, StandardOpenOption.APPEND);
+
+		lastAppendIndex = size;
 	}
 
 }

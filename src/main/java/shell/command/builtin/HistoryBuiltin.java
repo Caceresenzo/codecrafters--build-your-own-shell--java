@@ -29,6 +29,11 @@ public enum HistoryBuiltin implements Builtin {
 			shell.getHistory().writeTo(path);
 
 			return;
+		} else if ("-a".equals(first)) {
+			final var path = shell.getWorkingDirectory().resolve(arguments.get(2));
+			shell.getHistory().appendTo(path);
+
+			return;
 		}
 
 		for (var index = start; index < history.size(); ++index) {
