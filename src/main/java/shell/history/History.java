@@ -79,7 +79,7 @@ public class History implements AutoCloseable {
 
 	@Override
 	public void close() {
-		getStoragePath().ifPresent(this::writeTo);
+		getStoragePath().ifPresent(this::appendTo);
 	}
 
 }
