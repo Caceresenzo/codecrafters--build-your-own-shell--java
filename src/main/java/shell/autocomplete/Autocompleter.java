@@ -83,6 +83,7 @@ public class Autocompleter {
 		if (bellRang) {
 			System.out.print(
 				candidates.stream()
+					.sorted()
 					.map(beginning::concat)
 					.collect(Collectors.joining("  ", "\n", "\n"))
 			);
