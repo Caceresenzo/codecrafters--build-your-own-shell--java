@@ -97,14 +97,16 @@ public class Autocompleter {
 		return Result.MORE;
 	}
 
-	private static String findSharedPrefix(SequencedSet<String> candidates) {
+	static String findSharedPrefix(SequencedSet<String> candidates) {
 		final var first = candidates.getFirst();
 		if (first.isEmpty()) {
 			return "";
 		}
 
+		final var firstLength = first.length();
+
 		var end = 0;
-		for (; end < first.length(); ++end) {
+		while (end <= firstLength) {
 			var oneIsNotMatching = false;
 
 			final var iterator = candidates.iterator();
@@ -123,6 +125,8 @@ public class Autocompleter {
 				end -= 1;
 				break;
 			}
+
+			++end;
 		}
 
 		return first.substring(0, end);
