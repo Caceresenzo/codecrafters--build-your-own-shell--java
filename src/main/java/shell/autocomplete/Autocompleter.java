@@ -83,13 +83,14 @@ public class Autocompleter {
 		if (bellRang) {
 			System.out.print(
 				candidates.stream()
+					.sorted()
 					.map(beginning::concat)
 					.collect(Collectors.joining("  ", "\n", "\n"))
 			);
 
 			Main.prompt();
 
-			System.out.print(beginning);
+			System.out.print(line);
 			System.out.flush();
 		}
 
