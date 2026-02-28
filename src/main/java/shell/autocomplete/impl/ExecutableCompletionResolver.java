@@ -17,6 +17,7 @@ public enum ExecutableCompletionResolver implements CompletionResolver {
 		final var candidates = new HashSet<String>();
 
 		final FileFilter filter = (file) -> {
+			System.out.println("candidate: %s  (isFile=%s, canExecute=%s)".formatted(file.getName(), file.isFile(), file.canExecute()));
 			return file.getName().startsWith(beginning) && file.isFile() && file.canExecute();
 		};
 
