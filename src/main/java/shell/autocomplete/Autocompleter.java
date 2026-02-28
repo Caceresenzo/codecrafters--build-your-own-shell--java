@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.SequencedSet;
 import java.util.Set;
 import java.util.TreeSet;
-import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import lombok.Getter;
@@ -58,7 +57,6 @@ public class Autocompleter {
 			.map((resolver) -> resolver.getCompletions(shell, isBeginningCommand, directory, prefix))
 			.flatMap(Set::stream)
 			.map((candidate) -> candidate.substring(prefix.length()))
-			.filter(Predicate.not(String::isBlank))
 			.collect(Collectors.toCollection(() -> new TreeSet<>(SHORTEST_FIRST)));
 
 		if (candidates.isEmpty()) {
@@ -97,14 +95,18 @@ public class Autocompleter {
 		return Result.MORE;
 	}
 
-	private static String findSharedPrefix(SequencedSet<String> candidates) {
+	static String findSharedPrefix(SequencedSet<String> candidates) {
 		final var first = candidates.getFirst();
 		if (first.isEmpty()) {
 			return "";
 		}
 
+		final var firstLength = first.length();
+
 		var end = 0;
-		for (; end < first.length(); ++end) {
+		while (end < firstLength) {
+			++end;
+
 			var oneIsNotMatching = false;
 
 			final var iterator = candidates.iterator();
