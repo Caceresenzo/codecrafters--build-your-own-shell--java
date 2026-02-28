@@ -58,7 +58,7 @@ public class Main {
 
 			exitCode = loop(shell);
 		}
-		
+
 		System.exit(exitCode);
 	}
 

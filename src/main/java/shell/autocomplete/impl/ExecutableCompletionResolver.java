@@ -2,6 +2,7 @@ package shell.autocomplete.impl;
 
 import java.io.File;
 import java.io.FileFilter;
+import java.nio.file.Path;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -13,7 +14,7 @@ public enum ExecutableCompletionResolver implements CompletionResolver {
 	INSTANCE;
 
 	@Override
-	public Set<String> getCompletions(Shell shell, boolean isCommand, String beginning) {
+	public Set<String> getCompletions(Shell shell, boolean isCommand, Path directory, String prefix) {
 		if (!isCommand) {
 			return Set.of();
 		}
@@ -21,7 +22,7 @@ public enum ExecutableCompletionResolver implements CompletionResolver {
 		final var candidates = new HashSet<String>();
 
 		final FileFilter filter = (file) -> {
-			return file.getName().startsWith(beginning) && file.isFile() && file.canExecute();
+			return file.getName().startsWith(prefix) && file.isFile() && file.canExecute();
 		};
 
 		for (final var path : shell.get$PATH()) {

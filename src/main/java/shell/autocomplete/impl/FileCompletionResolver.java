@@ -1,6 +1,7 @@
 package shell.autocomplete.impl;
 
 import java.io.FileFilter;
+import java.nio.file.Path;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -12,12 +13,12 @@ public enum FileCompletionResolver implements CompletionResolver {
 	INSTANCE;
 
 	@Override
-	public Set<String> getCompletions(Shell shell, boolean isCommand, String beginning) {
+	public Set<String> getCompletions(Shell shell, boolean isCommand, Path directory, String prefix) {
 		final FileFilter filter = (file) -> {
-			return file.getName().startsWith(beginning);
+			return file.getName().startsWith(prefix);
 		};
 
-		final var files = shell.getWorkingDirectory().toFile().listFiles(filter);
+		final var files = directory.toFile().listFiles(filter);
 		if (files == null) {
 			return Set.of();
 		}
