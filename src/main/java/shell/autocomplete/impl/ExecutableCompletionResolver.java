@@ -13,7 +13,11 @@ public enum ExecutableCompletionResolver implements CompletionResolver {
 	INSTANCE;
 
 	@Override
-	public Set<String> getCompletions(Shell shell, String beginning) {
+	public Set<String> getCompletions(Shell shell, boolean isCommand, String beginning) {
+		if (!isCommand) {
+			return Set.of();
+		}
+
 		final var candidates = new HashSet<String>();
 
 		final FileFilter filter = (file) -> {

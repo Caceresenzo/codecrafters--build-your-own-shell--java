@@ -12,6 +12,9 @@ import shell.Main;
 import shell.Shell;
 import shell.autocomplete.impl.BuiltinCompletionResolver;
 import shell.autocomplete.impl.ExecutableCompletionResolver;
+import shell.autocomplete.impl.FileCompletionResolver;
+import shell.parse.LineParser;
+import shell.parse.ParsedCommand;
 
 public class Autocompleter {
 
@@ -20,17 +23,30 @@ public class Autocompleter {
 	@Getter
 	public final List<CompletionResolver> resolvers = List.of(
 		BuiltinCompletionResolver.INSTANCE,
-		ExecutableCompletionResolver.INSTANCE
+		ExecutableCompletionResolver.INSTANCE,
+		FileCompletionResolver.INSTANCE
 	);
 
 	public Result autocomplete(Shell shell, StringBuilder line, boolean bellRang) {
-		final var beginning = line.toString();
+		final var arguments = new LineParser(line.toString()).parse()
+			.stream()
+			.reduce((a, b) -> b)
+			.map(ParsedCommand::arguments)
+			.orElseGet(List::of);
+
+		if (arguments.isEmpty()) {
+			return Result.FOUND;
+		}
+
+		final var beginning = arguments.getLast();
 		if (beginning.isBlank()) {
 			return Result.FOUND;
 		}
 
+		final var isBeginningCommand = arguments.size() == 1;
+
 		final var candidates = resolvers.stream()
-			.map((resolver) -> resolver.getCompletions(shell, beginning))
+			.map((resolver) -> resolver.getCompletions(shell, isBeginningCommand, beginning))
 			.flatMap(Set::stream)
 			.map((candidate) -> candidate.substring(beginning.length()))
 			.collect(Collectors.toCollection(() -> new TreeSet<>(SHORTEST_FIRST)));
