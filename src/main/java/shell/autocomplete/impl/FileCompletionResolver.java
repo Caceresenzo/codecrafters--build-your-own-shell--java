@@ -15,11 +15,9 @@ public enum FileCompletionResolver implements CompletionResolver {
 	@Override
 	public Set<String> getCompletions(Shell shell, boolean isCommand, Path directory, String prefix) {
 		final FileFilter filter = (file) -> {
-			//			System.err.println("filtering: " + file);
 			return file.getName().startsWith(prefix);
 		};
 
-		//		System.err.println("listing: " + directory);
 		final var files = directory.toFile().listFiles(filter);
 		if (files == null) {
 			return Set.of();
