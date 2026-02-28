@@ -1,5 +1,6 @@
 package shell.autocomplete.impl;
 
+import java.nio.file.Path;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -11,7 +12,7 @@ public enum BuiltinCompletionResolver implements CompletionResolver {
 	INSTANCE;
 
 	@Override
-	public Set<String> getCompletions(Shell shell, boolean isCommand, String beginning) {
+	public Set<String> getCompletions(Shell shell, boolean isCommand, Path directory, String prefix) {
 		if (!isCommand) {
 			return Set.of();
 		}
@@ -19,7 +20,7 @@ public enum BuiltinCompletionResolver implements CompletionResolver {
 		return shell.getBuiltins()
 			.keySet()
 			.stream()
-			.filter((name) -> name.startsWith(beginning))
+			.filter((name) -> name.startsWith(prefix))
 			.collect(Collectors.toSet());
 	}
 

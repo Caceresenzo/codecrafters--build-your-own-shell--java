@@ -1,10 +1,12 @@
 package shell.autocomplete;
 
+import java.nio.file.Path;
 import java.util.Comparator;
 import java.util.List;
 import java.util.SequencedSet;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import lombok.Getter;
@@ -35,20 +37,36 @@ public class Autocompleter {
 			.orElseGet(List::of);
 
 		if (arguments.isEmpty()) {
-			return Result.FOUND;
+			return Result.NONE;
 		}
 
 		final var beginning = arguments.getLast();
 		if (beginning.isBlank()) {
-			return Result.FOUND;
+			return Result.NONE;
 		}
 
 		final var isBeginningCommand = arguments.size() == 1;
 
+		final String prefix;
+		final Path parent;
+		if (beginning.endsWith("/")) {
+			parent = Path.of(beginning);
+			prefix = "";
+		} else {
+			final var beginningPath = Path.of(beginning);
+			prefix = beginningPath.getFileName().toString();
+			parent = beginningPath.getParent();
+		}
+
+		final var directory = parent != null
+			? shell.getWorkingDirectory().resolve(parent)
+			: shell.getWorkingDirectory();
+
 		final var candidates = resolvers.stream()
-			.map((resolver) -> resolver.getCompletions(shell, isBeginningCommand, beginning))
+			.map((resolver) -> resolver.getCompletions(shell, isBeginningCommand, directory, prefix))
 			.flatMap(Set::stream)
-			.map((candidate) -> candidate.substring(beginning.length()))
+			.map((candidate) -> candidate.substring(prefix.length()))
+			.filter(Predicate.not(String::isBlank))
 			.collect(Collectors.toCollection(() -> new TreeSet<>(SHORTEST_FIRST)));
 
 		if (candidates.isEmpty()) {
@@ -63,9 +81,9 @@ public class Autocompleter {
 			return Result.FOUND;
 		}
 
-		final var prefix = findSharedPrefix(candidates);
-		if (!prefix.isEmpty()) {
-			writeCandidate(line, prefix, true);
+		final var sharedPrefix = findSharedPrefix(candidates);
+		if (!sharedPrefix.isEmpty()) {
+			writeCandidate(line, sharedPrefix, true);
 
 			return Result.MORE;
 		}
