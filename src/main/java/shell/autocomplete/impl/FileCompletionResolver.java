@@ -25,7 +25,12 @@ public enum FileCompletionResolver implements CompletionResolver {
 
 		final var candidates = new HashSet<String>();
 		for (final var file : files) {
-			candidates.add(file.getName());
+			var name = file.getName();
+			if (file.isDirectory()) {
+				name += "/";
+			}
+
+			candidates.add(name);
 		}
 
 		return candidates;

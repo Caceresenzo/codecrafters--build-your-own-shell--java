@@ -139,7 +139,7 @@ public class Autocompleter {
 		line.append(candidate);
 		System.out.print(candidate);
 
-		if (!hasMore) {
+		if (!hasMore && !candidate.endsWith("/")) {
 			line.append(' ');
 			System.out.print(' ');
 		}
