@@ -7,6 +7,6 @@ import shell.Shell;
 @FunctionalInterface
 public interface CompletionResolver {
 
-	Set<String> getCompletions(Shell shell, String beginning);
+	Set<String> getCompletions(Shell shell, boolean isCommand, String beginning);
 
 }
