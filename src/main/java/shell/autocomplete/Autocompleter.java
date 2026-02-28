@@ -15,8 +15,6 @@ import shell.Shell;
 import shell.autocomplete.impl.BuiltinCompletionResolver;
 import shell.autocomplete.impl.ExecutableCompletionResolver;
 import shell.autocomplete.impl.FileCompletionResolver;
-import shell.parse.LineParser;
-import shell.parse.ParsedCommand;
 
 public class Autocompleter {
 
@@ -30,26 +28,20 @@ public class Autocompleter {
 	);
 
 	public Result autocomplete(Shell shell, StringBuilder line, boolean bellRang) {
-		final var arguments = new LineParser(line.toString()).parse()
-			.stream()
-			.reduce((a, b) -> b)
-			.map(ParsedCommand::arguments)
-			.orElseGet(List::of);
+		final var currentLine = line.toString();
 
-		if (arguments.isEmpty()) {
-			return Result.NONE;
-		}
-
-		final var beginning = arguments.getLast();
-		if (beginning.isBlank()) {
-			return Result.NONE;
-		}
-
-		final var isBeginningCommand = arguments.size() == 1;
+		final var lastSpaceIndex = currentLine.lastIndexOf(' ');
+		final var isBeginningCommand = lastSpaceIndex == -1;
+		final var beginning = isBeginningCommand
+			? currentLine
+			: currentLine.substring(lastSpaceIndex, currentLine.length());
 
 		final String prefix;
 		final Path parent;
-		if (beginning.endsWith("/")) {
+		if (beginning.isBlank()) {
+			parent = null;
+			prefix = "";
+		} else if (beginning.endsWith("/")) {
 			parent = Path.of(beginning);
 			prefix = "";
 		} else {
@@ -139,7 +131,7 @@ public class Autocompleter {
 		line.append(candidate);
 		System.out.print(candidate);
 
-		if (!hasMore) {
+		if (!hasMore && !candidate.endsWith("/")) {
 			line.append(' ');
 			System.out.print(' ');
 		}
