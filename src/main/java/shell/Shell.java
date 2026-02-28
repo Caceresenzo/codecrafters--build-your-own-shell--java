@@ -51,7 +51,7 @@ public class Shell implements AutoCloseable {
 		for (final var directory : get$PATH()) {
 			final var path = Paths.get(directory, program).normalize().toAbsolutePath();
 
-			if (Files.exists(path)) {
+			if (Files.exists(path) && Files.isExecutable(path)) {
 				return new Binary(path);
 			}
 		}
