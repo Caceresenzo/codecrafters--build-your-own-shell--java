@@ -1,5 +1,6 @@
 package shell.autocomplete;
 
+import java.nio.file.Paths;
 import java.util.Comparator;
 import java.util.List;
 import java.util.SequencedSet;
@@ -35,20 +36,28 @@ public class Autocompleter {
 			.orElseGet(List::of);
 
 		if (arguments.isEmpty()) {
-			return Result.FOUND;
+			return Result.NONE;
 		}
 
 		final var beginning = arguments.getLast();
 		if (beginning.isBlank()) {
-			return Result.FOUND;
+			return Result.NONE;
 		}
 
 		final var isBeginningCommand = arguments.size() == 1;
 
+		final var beginningPath = Paths.get(beginning);
+		final var prefix = beginningPath.getFileName().toString();
+		final var parent = beginningPath.getParent();
+
+		final var directory = parent != null
+			? shell.getWorkingDirectory().resolve(parent)
+			: shell.getWorkingDirectory();
+
 		final var candidates = resolvers.stream()
-			.map((resolver) -> resolver.getCompletions(shell, isBeginningCommand, beginning))
+			.map((resolver) -> resolver.getCompletions(shell, isBeginningCommand, directory, prefix))
 			.flatMap(Set::stream)
-			.map((candidate) -> candidate.substring(beginning.length()))
+			.map((candidate) -> candidate.substring(prefix.length()))
 			.collect(Collectors.toCollection(() -> new TreeSet<>(SHORTEST_FIRST)));
 
 		if (candidates.isEmpty()) {
@@ -63,9 +72,9 @@ public class Autocompleter {
 			return Result.FOUND;
 		}
 
-		final var prefix = findSharedPrefix(candidates);
-		if (!prefix.isEmpty()) {
-			writeCandidate(line, prefix, true);
+		final var sharedPrefix = findSharedPrefix(candidates);
+		if (!sharedPrefix.isEmpty()) {
+			writeCandidate(line, sharedPrefix, true);
 
 			return Result.MORE;
 		}
