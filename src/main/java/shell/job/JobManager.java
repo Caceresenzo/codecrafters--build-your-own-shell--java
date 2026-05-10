@@ -14,7 +14,7 @@ public class JobManager {
 		System.err.printf("[%s] %s%n", number, process.pid());
 	}
 
-	public void reap() {
+	public void reap(boolean printRunning) {
 		final var mostRecentIndex = entries.size() - 1;
 		final var previousIndex = mostRecentIndex - 1;
 
@@ -36,6 +36,8 @@ public class JobManager {
 				status = "Done";
 				suffix = "";
 				indicesToRemove.add(index);
+			} else if (!printRunning) {
+				continue;
 			}
 
 			System.out.printf("[%s]%s  %-24s%s%s%n", entry.number(), symbol, status, entry.command(), suffix);
