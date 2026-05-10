@@ -10,6 +10,7 @@ import shell.command.Binary;
 import shell.command.Executable;
 import shell.command.builtin.Builtin;
 import shell.command.builtin.CdBuiltin;
+import shell.command.builtin.DeclareBuiltin;
 import shell.command.builtin.EchoBuiltin;
 import shell.command.builtin.ExitBuiltin;
 import shell.command.builtin.HistoryBuiltin;
@@ -31,7 +32,8 @@ public class Shell implements AutoCloseable {
 		"pwd", PwdBuiltin.INSTANCE,
 		"cd", CdBuiltin.INSTANCE,
 		"history", HistoryBuiltin.INSTANCE,
-		"jobs", JobsBuiltin.INSTANCE
+		"jobs", JobsBuiltin.INSTANCE,
+		"declare", DeclareBuiltin.INSTANCE
 	);
 
 	private @Getter Path workingDirectory = Path.of(".").toAbsolutePath().normalize();
