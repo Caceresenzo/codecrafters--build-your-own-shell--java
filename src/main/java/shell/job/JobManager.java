@@ -15,9 +15,21 @@ public class JobManager {
 	}
 
 	public void dump() {
-		for (final var entry : entries) {
+		final var mostRecentIndex = entries.size() - 1;
+		final var previousIndex = mostRecentIndex - 1;
+
+		for (var index = 0; index < entries.size(); index++) {
+			final var entry = entries.get(index);
+
+			var symbol = " ";
+			if (index == mostRecentIndex) {
+				symbol = "+";
+			} else if (index == previousIndex) {
+				symbol = "-";
+			}
+
 			final var status = "Running";
-			System.err.printf("[%s]+  %-24s %s &%n", entry.number(), status, entry.command());
+			System.err.printf("[%s]%s  %-24s %s &%n", symbol, entry.number(), status, entry.command());
 		}
 	}
 
