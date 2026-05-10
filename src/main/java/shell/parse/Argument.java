@@ -12,15 +12,23 @@ public record Argument(
 	public String resolve(Environment environment) {
 		final var builder = new StringBuilder();
 
-		for (ArgumentPart part : parts) {
+		var canBeSkipped = true;
+
+		for (final var part : parts) {
 			if (part instanceof ArgumentPart.Literal(final var value)) {
 				builder.append(value);
+				canBeSkipped = false;
 			} else if (part instanceof ArgumentPart.Variable(final var name)) {
 				builder.append(environment.getVariableOrDefault(name, ""));
 			}
 		}
 
-		return builder.toString();
+		final var result = builder.toString();
+		if (result.isBlank() && canBeSkipped) {
+			return null;
+		}
+
+		return result;
 	}
 
 	public static Argument literal(String value) {
