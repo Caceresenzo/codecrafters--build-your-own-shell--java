@@ -14,9 +14,11 @@ public class JobManager {
 		System.err.printf("[%s] %s%n", number, process.pid());
 	}
 
-	public void dump() {
+	public void reap() {
 		final var mostRecentIndex = entries.size() - 1;
 		final var previousIndex = mostRecentIndex - 1;
+
+		final var indicesToRemove = new ArrayList<Integer>();
 
 		for (var index = 0; index < entries.size(); index++) {
 			final var entry = entries.get(index);
@@ -28,8 +30,17 @@ public class JobManager {
 				symbol = "-";
 			}
 
-			final var status = "Running";
+			var status = "Running";
+			if (!entry.process().isAlive()) {
+				status = "Done";
+				indicesToRemove.add(index);
+			}
+
 			System.err.printf("[%s]%s  %-24s %s &%n", entry.number(), symbol, status, entry.command());
+		}
+
+		for (final var index : indicesToRemove.reversed()) {
+			entries.remove((int) index);
 		}
 	}
 
