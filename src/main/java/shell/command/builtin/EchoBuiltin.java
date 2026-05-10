@@ -12,7 +12,7 @@ public enum EchoBuiltin implements Builtin {
 	INSTANCE;
 
 	@Override
-	public OptionalInt execute(Shell shell, List<String> arguments, RedirectStreams redirectStreams) {
+	public OptionalInt execute(Shell shell, List<String> arguments, RedirectStreams redirectStreams, boolean isJob) {
 		final var line = arguments.stream()
 			.skip(1)
 			.collect(Collectors.joining(" "));

@@ -55,7 +55,8 @@ class LineParserTest {
 				List.of(
 					new Redirect(StandardNamedStream.OUTPUT, Path.of("out.txt"), true),
 					new Redirect(StandardNamedStream.OUTPUT, Path.of("out2.txt"), false)
-				)
+				),
+				false
 			));
 	}
 

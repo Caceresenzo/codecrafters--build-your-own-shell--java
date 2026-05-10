@@ -11,7 +11,7 @@ public enum ExitBuiltin implements Builtin {
 	INSTANCE;
 
 	@Override
-	public OptionalInt execute(Shell shell, List<String> arguments, RedirectStreams redirectStreams) {
+	public OptionalInt execute(Shell shell, List<String> arguments, RedirectStreams redirectStreams, boolean isJob) {
 		final var exitCode = arguments.size() > 2
 			? Integer.parseInt(arguments.get(1))
 			: 0;

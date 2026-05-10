@@ -52,7 +52,7 @@ public class Main {
 					System.exit(1);
 				}
 
-				builtin.execute(shell, arguments, RedirectStreams.standard());
+				builtin.execute(shell, arguments, RedirectStreams.standard(), false);
 				return;
 			}
 
@@ -223,7 +223,7 @@ public class Main {
 			final var executable = shell.which(program);
 			if (executable != null) {
 				try (final var redirectStreams = RedirectStreams.from(command.redirects())) {
-					return executable.execute(shell, command.arguments(), redirectStreams);
+					return executable.execute(shell, command.arguments(), redirectStreams, command.isJob());
 				}
 			} else {
 				notFound(program);

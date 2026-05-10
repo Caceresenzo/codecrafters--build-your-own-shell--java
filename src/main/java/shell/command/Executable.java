@@ -8,6 +8,6 @@ import shell.io.RedirectStreams;
 
 public interface Executable {
 
-	OptionalInt execute(Shell shell, List<String> arguments, RedirectStreams redirectStreams);
+	OptionalInt execute(Shell shell, List<String> arguments, RedirectStreams redirectStreams, boolean isJob);
 
 }

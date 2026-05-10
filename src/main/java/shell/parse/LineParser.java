@@ -16,6 +16,7 @@ public class LineParser {
 	public static final char BACKSLASH = '\\';
 	public static final char GREATER_THAN = '>';
 	public static final char PIPE = '|';
+	public static final char AMPERSAND = '&';
 
 	private final CharacterIterator iterator;
 
@@ -23,6 +24,7 @@ public class LineParser {
 
 	private List<String> arguments = new ArrayList<>();
 	private List<Redirect> redirects = new ArrayList<>();
+	private boolean isJob;
 
 	public LineParser(String line) {
 		this.iterator = new StringCharacterIterator(line);
@@ -37,7 +39,7 @@ public class LineParser {
 		}
 
 		if (!arguments.isEmpty()) {
-			commands.add(new ParsedCommand(arguments, redirects));
+			commands.add(new ParsedCommand(arguments, redirects, isJob));
 		}
 
 		return commands;
@@ -58,6 +60,9 @@ public class LineParser {
 				case BACKSLASH -> backslash(stringBuilder, false);
 				case GREATER_THAN -> redirect(StandardNamedStream.OUTPUT);
 				case PIPE -> pipe();
+				case AMPERSAND -> {
+					isJob = true;
+				}
 				default -> {
 					if (Character.isDigit(character) && peek() == GREATER_THAN) {
 						iterator.next();
@@ -142,10 +147,11 @@ public class LineParser {
 	}
 
 	private void pipe() {
-		commands.add(new ParsedCommand(arguments, redirects));
+		commands.add(new ParsedCommand(arguments, redirects, isJob));
 
 		arguments = new ArrayList<>();
 		redirects = new ArrayList<>();
+		isJob = false;
 	}
 
 	public char peek() {
