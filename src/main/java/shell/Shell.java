@@ -39,6 +39,7 @@ public class Shell implements AutoCloseable {
 	private @Getter Path workingDirectory = Path.of(".").toAbsolutePath().normalize();
 	private @Getter History history = new History(this);
 	private @Getter JobManager jobs = new JobManager();
+	private @Getter Environment environment = new Environment();
 
 	public Builtin whichBuiltin(String name) {
 		return builtins.get(name);
