@@ -17,6 +17,8 @@ public class LineParser {
 	public static final char PIPE = '|';
 	public static final char DOLLAR = '$';
 	public static final char AMPERSAND = '&';
+	public static final char BRACE_OPEN = '{';
+	public static final char BRACE_CLOSE = '}';
 
 	private final CharacterIterator iterator;
 
@@ -194,9 +196,22 @@ public class LineParser {
 		final var nameNameBuilder = new StringBuilder();
 
 		char character;
-		while ((character = peek()) != CharacterIterator.DONE && (Character.isAlphabetic(character) || Character.isDigit(character) || character == '_')) {
-			nameNameBuilder.append(character);
+		if (peek() == BRACE_OPEN) {
 			iterator.next();
+
+			while ((character = peek()) != CharacterIterator.DONE && character != BRACE_CLOSE) {
+				nameNameBuilder.append(character);
+				iterator.next();
+			}
+
+			if (peek() == BRACE_CLOSE) {
+				iterator.next();
+			}
+		} else {
+			while ((character = peek()) != CharacterIterator.DONE && (Character.isAlphabetic(character) || Character.isDigit(character) || character == '_')) {
+				nameNameBuilder.append(character);
+				iterator.next();
+			}
 		}
 
 		final var name = nameNameBuilder.toString();
