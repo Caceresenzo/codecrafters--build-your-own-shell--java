@@ -2,17 +2,19 @@ package shell;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import java.nio.file.Path;
 import java.util.List;
 
 import org.junit.jupiter.api.Test;
 
 import shell.io.StandardNamedStream;
+import shell.parse.Argument;
 import shell.parse.LineParser;
 import shell.parse.ParsedCommand;
 import shell.parse.Redirect;
 
 class LineParserTest {
+
+	private final Environment environment = new Environment();
 
 	@Test
 	void testBackslash() {
@@ -44,17 +46,18 @@ class LineParserTest {
 	@Test
 	void testRedirect() {
 		assertThat(parse("echo a > out.txt").redirects())
-			.containsExactly(new Redirect(StandardNamedStream.OUTPUT, Path.of("out.txt"), false));
+			.containsExactly(new Redirect(StandardNamedStream.OUTPUT, Argument.literal("out.txt"), false));
 
 		assertThat(parse("echo a >> out.txt").redirects())
-			.containsExactly(new Redirect(StandardNamedStream.OUTPUT, Path.of("out.txt"), true));
+			.containsExactly(new Redirect(StandardNamedStream.OUTPUT, Argument.literal("out.txt"), true));
 
+		final var x = parse("echo a >> out.txt > out2.txt");
 		assertThat(parse("echo a >> out.txt > out2.txt"))
 			.isEqualTo(new ParsedCommand(
-				List.of("echo", "a"),
+				Argument.literal("echo", "a"),
 				List.of(
-					new Redirect(StandardNamedStream.OUTPUT, Path.of("out.txt"), true),
-					new Redirect(StandardNamedStream.OUTPUT, Path.of("out2.txt"), false)
+					new Redirect(StandardNamedStream.OUTPUT, Argument.literal("out.txt"), true),
+					new Redirect(StandardNamedStream.OUTPUT, Argument.literal("out2.txt"), false)
 				),
 				false
 			));
@@ -63,7 +66,7 @@ class LineParserTest {
 	@Test
 	void testRedirectToDifferentStreams() {
 		assertThat(parse("echo a 2> out.txt").redirects())
-			.containsExactly(new Redirect(StandardNamedStream.ERROR, Path.of("out.txt"), false));
+			.containsExactly(new Redirect(StandardNamedStream.ERROR, Argument.literal("out.txt"), false));
 	}
 
 	ParsedCommand parse(String line) {
@@ -71,7 +74,7 @@ class LineParserTest {
 	}
 
 	List<String> parseArguments(String line) {
-		return new LineParser(line).parse().getFirst().arguments();
+		return new LineParser(line).parse().getFirst().resolveArguments(environment);
 	}
 
 }

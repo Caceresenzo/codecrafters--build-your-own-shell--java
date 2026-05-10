@@ -1,6 +1,5 @@
 package shell.parse;
 
-import java.nio.file.Path;
 import java.text.CharacterIterator;
 import java.text.StringCharacterIterator;
 import java.util.ArrayList;
@@ -16,13 +15,15 @@ public class LineParser {
 	public static final char BACKSLASH = '\\';
 	public static final char GREATER_THAN = '>';
 	public static final char PIPE = '|';
+	public static final char DOLLAR = '$';
 	public static final char AMPERSAND = '&';
 
 	private final CharacterIterator iterator;
 
 	private final List<ParsedCommand> commands = new ArrayList<>();
 
-	private List<String> arguments = new ArrayList<>();
+	private List<Argument> arguments = new ArrayList<>();
+	private List<ArgumentPart> argumentParts = new ArrayList<>();
 	private List<Redirect> redirects = new ArrayList<>();
 	private boolean isJob;
 
@@ -31,7 +32,7 @@ public class LineParser {
 	}
 
 	public List<ParsedCommand> parse() {
-		String argument;
+		Argument argument;
 
 		iterator.first();
 		while ((argument = nextArgument()) != null) {
@@ -39,20 +40,30 @@ public class LineParser {
 		}
 
 		if (!arguments.isEmpty()) {
-			commands.add(new ParsedCommand(arguments, redirects, isJob));
+			pipe();
 		}
 
 		return commands;
 	}
 
-	private String nextArgument() {
+	private void appendLiteralPart(StringBuilder stringBuilder) {
+		if (stringBuilder.isEmpty()) {
+			return;
+		}
+
+		argumentParts.add(new ArgumentPart.Literal(stringBuilder.toString()));
+		stringBuilder.setLength(0);
+	}
+
+	private Argument nextArgument() {
 		final var stringBuilder = new StringBuilder();
 
 		for (var character = iterator.current(); character != CharacterIterator.DONE; character = iterator.next()) {
 			switch (character) {
 				case SPACE -> {
-					if (!stringBuilder.isEmpty()) {
-						return stringBuilder.toString();
+					appendLiteralPart(stringBuilder);
+					if (!argumentParts.isEmpty()) {
+						return toArgument(stringBuilder);
 					}
 				}
 				case SINGLE -> singleQuote(stringBuilder);
@@ -60,6 +71,14 @@ public class LineParser {
 				case BACKSLASH -> backslash(stringBuilder, false);
 				case GREATER_THAN -> redirect(StandardNamedStream.OUTPUT);
 				case PIPE -> pipe();
+				case DOLLAR -> {
+					if (!stringBuilder.isEmpty()) {
+						argumentParts.add(new ArgumentPart.Literal(stringBuilder.toString()));
+						stringBuilder.setLength(0);
+					}
+
+					variable();
+				}
 				case AMPERSAND -> {
 					isJob = true;
 				}
@@ -75,11 +94,23 @@ public class LineParser {
 			}
 		}
 
-		if (!stringBuilder.isEmpty()) {
-			return stringBuilder.toString();
+		appendLiteralPart(stringBuilder);
+		if (!argumentParts.isEmpty()) {
+			return toArgument(stringBuilder);
 		}
 
 		return null;
+	}
+
+	private Argument toArgument(StringBuilder lastLiteralPart) {
+		if (lastLiteralPart != null && !lastLiteralPart.isEmpty()) {
+			argumentParts.add(new ArgumentPart.Literal(lastLiteralPart.toString()));
+		}
+
+		final var argument = new Argument(List.copyOf(argumentParts));
+		argumentParts.clear();
+
+		return argument;
 	}
 
 	private void singleQuote(StringBuilder stringBuilder) {
@@ -141,17 +172,35 @@ public class LineParser {
 
 		redirects.add(new Redirect(
 			standardStream,
-			Path.of(path),
+			path,
 			append
 		));
 	}
 
 	private void pipe() {
+		if (!argumentParts.isEmpty()) {
+			arguments.add(toArgument(null));
+		}
+
 		commands.add(new ParsedCommand(arguments, redirects, isJob));
 
 		arguments = new ArrayList<>();
+		argumentParts = new ArrayList<>();
 		redirects = new ArrayList<>();
 		isJob = false;
+	}
+
+	private void variable() {
+		final var nameNameBuilder = new StringBuilder();
+
+		char character;
+		while ((character = peek()) != CharacterIterator.DONE && (Character.isAlphabetic(character) || Character.isDigit(character) || character == '_')) {
+			nameNameBuilder.append(character);
+			iterator.next();
+		}
+
+		final var name = nameNameBuilder.toString();
+		argumentParts.add(new ArgumentPart.Variable(name));
 	}
 
 	public char peek() {
