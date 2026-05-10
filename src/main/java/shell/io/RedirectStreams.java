@@ -1,8 +1,10 @@
 package shell.io;
 
 import java.io.FileNotFoundException;
+import java.nio.file.Path;
 import java.util.List;
 
+import shell.Environment;
 import shell.parse.Redirect;
 
 public record RedirectStreams(
@@ -53,12 +55,15 @@ public record RedirectStreams(
 		);
 	}
 
-	public static RedirectStreams from(List<Redirect> redirects) throws FileNotFoundException {
+	public static RedirectStreams from(List<Redirect> redirects, Environment environment) throws FileNotFoundException {
 		RedirectStream output = new RedirectStream.Standard(StandardNamedStream.OUTPUT, System.out);
 		RedirectStream error = new RedirectStream.Standard(StandardNamedStream.ERROR, System.err);
 
 		for (final var redirect : redirects) {
-			final var stream = new RedirectStream.File(redirect.path(), redirect.append());
+			final var stream = new RedirectStream.File(
+				Path.of(redirect.path().resolve(environment)),
+				redirect.append()
+			);
 
 			switch (redirect.namedStream()) {
 				case OUTPUT -> {

@@ -15,6 +15,10 @@ public class Environment {
 		return variables.get(name);
 	}
 
+	public String getVariableOrDefault(String name, String defaultValue) {
+		return variables.getOrDefault(name, defaultValue);
+	}
+
 	public static boolean isValidName(String name) {
 		if (name.isEmpty()) {
 			return false;

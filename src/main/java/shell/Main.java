@@ -211,6 +211,8 @@ public class Main {
 
 	@SneakyThrows
 	public static OptionalInt eval(Shell shell, String line) {
+		final var environment = shell.getEnvironment();
+
 		shell.getHistory().add(line);
 
 		final var commands = new LineParser(line).parse();
@@ -220,12 +222,13 @@ public class Main {
 		} else if (commands.size() == 1) {
 			final var command = commands.getFirst();
 
-			final var program = command.program();
+			final var arguments = command.resolveArguments(environment);
+			final var program = arguments.getFirst();
 
 			final var executable = shell.which(program);
 			if (executable != null) {
-				try (final var redirectStreams = RedirectStreams.from(command.redirects())) {
-					return executable.execute(shell, command.arguments(), redirectStreams, command.isJob());
+				try (final var redirectStreams = RedirectStreams.from(command.redirects(), environment)) {
+					return executable.execute(shell, arguments, redirectStreams, command.isJob());
 				}
 			} else {
 				notFound(program);
@@ -243,6 +246,8 @@ public class Main {
 
 	@SneakyThrows
 	private static void pipeline(Shell shell, List<ParsedCommand> commands) {
+		final var environment = shell.getEnvironment();
+
 		final var currentProcessInfo = ProcessHandle.current().info();
 		final var jvmCommand = currentProcessInfo.command().orElse("java");
 		final var jvmArguments = currentProcessInfo.arguments().map(Arrays::asList).orElse(Collections.emptyList());
@@ -257,20 +262,21 @@ public class Main {
 
 				final var command = commands.get(index);
 
-				final var program = command.program();
+				final var arguments = command.resolveArguments(environment);
+				final var program = arguments.getFirst();
 				final var executable = shell.which(program);
 
 				final var commandArguments = switch (executable) {
 
 					case Builtin __: {
-						final var arguments = new ArrayList<String>();
-						arguments.add(jvmCommand);
-						arguments.addAll(jvmArguments);
-						arguments.add(BUILTIN_OPTION);
-						arguments.add(program);
-						arguments.addAll(command.arguments());
+						final var newArguments = new ArrayList<String>();
+						newArguments.add(jvmCommand);
+						newArguments.addAll(jvmArguments);
+						newArguments.add(BUILTIN_OPTION);
+						newArguments.add(program);
+						newArguments.addAll(arguments);
 
-						yield arguments;
+						yield newArguments;
 					}
 
 					case Binary(var path): {
@@ -278,19 +284,19 @@ public class Main {
 							.concat(
 								/* stupid but java does not allow custom arg0 */
 								Stream.of(path.getFileName().toString()),
-								command.arguments().stream().skip(1)
+								arguments.stream().skip(1)
 							)
 							.toList();
 					}
 
 					case null: {
-						final var arguments = new ArrayList<String>();
-						arguments.add(jvmCommand);
-						arguments.addAll(jvmArguments);
-						arguments.add(BUILTIN_OPTION);
-						arguments.add(program);
+						final var newArguments = new ArrayList<String>();
+						newArguments.add(jvmCommand);
+						newArguments.addAll(jvmArguments);
+						newArguments.add(BUILTIN_OPTION);
+						newArguments.add(program);
 
-						yield arguments;
+						yield newArguments;
 					}
 
 					default: {
@@ -306,7 +312,7 @@ public class Main {
 					.redirectOutput(isLast ? ProcessBuilder.Redirect.INHERIT : ProcessBuilder.Redirect.PIPE)
 					.redirectError(ProcessBuilder.Redirect.INHERIT);
 
-				final var redirectStreams = RedirectStreams.from(command.redirects());
+				final var redirectStreams = RedirectStreams.from(command.redirects(), environment);
 				streams.add(redirectStreams);
 				redirectStreams.apply(builder);
 

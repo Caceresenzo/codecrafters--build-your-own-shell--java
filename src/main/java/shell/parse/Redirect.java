@@ -1,12 +1,10 @@
 package shell.parse;
 
-import java.nio.file.Path;
-
 import shell.io.StandardNamedStream;
 
 public record Redirect(
 	StandardNamedStream namedStream,
-	Path path,
+	Argument path,
 	boolean append
 ) {
 
