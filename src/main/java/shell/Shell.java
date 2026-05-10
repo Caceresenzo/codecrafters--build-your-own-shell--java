@@ -17,6 +17,7 @@ import shell.command.builtin.JobsBuiltin;
 import shell.command.builtin.PwdBuiltin;
 import shell.command.builtin.TypeBuiltin;
 import shell.history.History;
+import shell.job.JobManager;
 
 public class Shell implements AutoCloseable {
 
@@ -35,6 +36,7 @@ public class Shell implements AutoCloseable {
 
 	private @Getter Path workingDirectory = Path.of(".").toAbsolutePath().normalize();
 	private @Getter History history = new History(this);
+	private @Getter JobManager jobs = new JobManager();
 
 	public Builtin whichBuiltin(String name) {
 		return builtins.get(name);

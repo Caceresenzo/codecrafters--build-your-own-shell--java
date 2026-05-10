@@ -37,7 +37,7 @@ public record Binary(
 			final var process = builder.start();
 
 			if (isJob) {
-				redirectStreams.error().println("[1] %s".formatted(process.pid()));
+				shell.getJobs().add(process, commandArguments);
 				return OptionalInt.empty();
 			}
 
