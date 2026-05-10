@@ -64,6 +64,8 @@ public class Main {
 
 	public static int loop(Shell shell) {
 		while (true) {
+			shell.getJobs().reap(false);
+
 			final var line = read(shell);
 
 			if (line == null) {
