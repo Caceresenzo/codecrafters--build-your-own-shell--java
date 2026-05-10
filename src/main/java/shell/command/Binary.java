@@ -17,7 +17,7 @@ public record Binary(
 
 	@SneakyThrows
 	@Override
-	public OptionalInt execute(Shell shell, List<String> arguments, RedirectStreams redirectStreams) {
+	public OptionalInt execute(Shell shell, List<String> arguments, RedirectStreams redirectStreams, boolean isJob) {
 		try {
 			final var commandArguments = Stream
 				.concat(
@@ -35,6 +35,11 @@ public record Binary(
 			applyRedirect(builder, redirectStreams.error(), StandardNamedStream.ERROR);
 
 			final var process = builder.start();
+
+			if (isJob) {
+				redirectStreams.error().println("[1] %s".formatted(process.pid()));
+				return OptionalInt.empty();
+			}
 
 			process.waitFor();
 		} catch (Exception exception) {

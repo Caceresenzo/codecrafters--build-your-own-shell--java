@@ -11,7 +11,7 @@ public enum JobsBuiltin implements Builtin {
 	INSTANCE;
 
 	@Override
-	public OptionalInt execute(Shell shell, List<String> arguments, RedirectStreams redirectStreams) {
+	public OptionalInt execute(Shell shell, List<String> arguments, RedirectStreams redirectStreams, boolean isJob) {
 		return OptionalInt.empty();
 	}
 

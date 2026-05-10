@@ -11,7 +11,7 @@ public enum HistoryBuiltin implements Builtin {
 	INSTANCE;
 
 	@Override
-	public OptionalInt execute(Shell shell, List<String> arguments, RedirectStreams redirectStreams) {
+	public OptionalInt execute(Shell shell, List<String> arguments, RedirectStreams redirectStreams, boolean isJob) {
 		final var first = arguments.size() > 1 ? arguments.get(1) : null;
 
 		if (first != null && first.matches("[\\d]+")) {

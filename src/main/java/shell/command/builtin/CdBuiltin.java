@@ -12,7 +12,7 @@ public enum CdBuiltin implements Builtin {
 	INSTANCE;
 
 	@Override
-	public OptionalInt execute(Shell shell, List<String> arguments, RedirectStreams redirectStreams) {
+	public OptionalInt execute(Shell shell, List<String> arguments, RedirectStreams redirectStreams, boolean isJob) {
 		final var path = arguments.get(1);
 		final var absolute = toAbsolute(shell, path).normalize().toAbsolutePath();
 
