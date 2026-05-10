@@ -15,4 +15,23 @@ public class Environment {
 		return variables.get(name);
 	}
 
+	public static boolean isValidName(String name) {
+		if (name.isEmpty()) {
+			return false;
+		}
+
+		final var first = name.charAt(0);
+		if (!Character.isLetter(first) && first != '_') {
+			return false;
+		}
+
+		for (final var character : name.toCharArray()) {
+			if (!Character.isLetterOrDigit(character) && character != '_') {
+				return false;
+			}
+		}
+
+		return true;
+	}
+
 }

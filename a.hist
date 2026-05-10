@@ -1,0 +1,22 @@
+du raspberry/mango/
+du raspberry/mango/banana.txt 
+du raspberry/mango 
+du raspberry/mango/banana.txt 
+ls a/bb 
+du raspberry/mango/banana.txt 
+sleep 10 &
+du raspberry/mango/banana.txt 
+sleep 10 &
+jobs
+sleep 1
+sleep 1 &
+jobs
+jobs
+sleep 1 &
+jobs
+jobs
+sleep 100 &
+sleep 200 &
+jobs
+sleep 300 &
+jobs
