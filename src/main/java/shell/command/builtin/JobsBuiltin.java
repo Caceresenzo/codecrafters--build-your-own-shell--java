@@ -12,7 +12,7 @@ public enum JobsBuiltin implements Builtin {
 
 	@Override
 	public OptionalInt execute(Shell shell, List<String> arguments, RedirectStreams redirectStreams, boolean isJob) {
-		shell.getJobs().dump();
+		shell.getJobs().reap();
 
 		return OptionalInt.empty();
 	}
