@@ -13,6 +13,7 @@ import shell.command.builtin.CdBuiltin;
 import shell.command.builtin.EchoBuiltin;
 import shell.command.builtin.ExitBuiltin;
 import shell.command.builtin.HistoryBuiltin;
+import shell.command.builtin.JobsBuiltin;
 import shell.command.builtin.PwdBuiltin;
 import shell.command.builtin.TypeBuiltin;
 import shell.history.History;
@@ -28,7 +29,8 @@ public class Shell implements AutoCloseable {
 		"type", TypeBuiltin.INSTANCE,
 		"pwd", PwdBuiltin.INSTANCE,
 		"cd", CdBuiltin.INSTANCE,
-		"history", HistoryBuiltin.INSTANCE
+		"history", HistoryBuiltin.INSTANCE,
+		"jobs", JobsBuiltin.INSTANCE
 	);
 
 	private @Getter Path workingDirectory = Path.of(".").toAbsolutePath().normalize();
