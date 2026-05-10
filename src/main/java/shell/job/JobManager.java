@@ -38,7 +38,7 @@ public class JobManager {
 				indicesToRemove.add(index);
 			}
 
-			System.err.printf("[%s]%s  %-24s%s%s%n", entry.number(), symbol, status, entry.command(), suffix);
+			System.out.printf("[%s]%s  %-24s%s%s%n", entry.number(), symbol, status, entry.command(), suffix);
 		}
 
 		for (final var index : indicesToRemove.reversed()) {
