@@ -34,11 +34,6 @@ public class Completer {
 	public Result complete(Shell shell, StringBuilder line, boolean bellRang) {
 		final var currentLine = line.toString();
 
-		final var firstSpaceIndex = currentLine.indexOf(' ');
-		final var command = firstSpaceIndex == -1
-			? currentLine
-			: currentLine.substring(0, firstSpaceIndex);
-
 		final var lastSpaceIndex = currentLine.lastIndexOf(' ');
 		final var isBeginningCommand = lastSpaceIndex == -1;
 		final var beginning = isBeginningCommand
@@ -66,15 +61,15 @@ public class Completer {
 		final var rawCandidates = new HashSet<String>();
 
 		if (isBeginningCommand) {
-			rawCandidates.addAll(BuiltinCompletionResolver.INSTANCE.getCompletions(shell, directory, command, prefix));
-			rawCandidates.addAll(ExecutableCompletionResolver.INSTANCE.getCompletions(shell, directory, command, prefix));
+			rawCandidates.addAll(BuiltinCompletionResolver.INSTANCE.getCompletions(shell, currentLine, directory, prefix));
+			rawCandidates.addAll(ExecutableCompletionResolver.INSTANCE.getCompletions(shell, currentLine, directory, prefix));
 		}
 
-		final var customCandidates = customCompletionResolver.getCompletions(shell, directory, command, prefix);
+		final var customCandidates = customCompletionResolver.getCompletions(shell, currentLine, directory, prefix);
 		if (!customCandidates.isEmpty()) {
 			rawCandidates.addAll(customCandidates);
 		} else {
-			rawCandidates.addAll(FileCompletionResolver.INSTANCE.getCompletions(shell, directory, command, prefix));
+			rawCandidates.addAll(FileCompletionResolver.INSTANCE.getCompletions(shell, currentLine, directory, prefix));
 		}
 
 		final var candidates = rawCandidates.stream()
