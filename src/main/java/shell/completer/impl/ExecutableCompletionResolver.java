@@ -1,4 +1,4 @@
-package shell.autocomplete.impl;
+package shell.completer.impl;
 
 import java.io.File;
 import java.io.FileFilter;
@@ -7,7 +7,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import shell.Shell;
-import shell.autocomplete.CompletionResolver;
+import shell.completer.CompletionResolver;
 
 public enum ExecutableCompletionResolver implements CompletionResolver {
 
