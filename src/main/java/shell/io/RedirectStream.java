@@ -12,7 +12,7 @@ import lombok.experimental.Accessors;
 
 public sealed interface RedirectStream extends AutoCloseable {
 
-	default void printf(String message, Object... args) {
+	default void println(String message, Object... args) {
 		println(String.format(message, args));
 	}
 

@@ -22,9 +22,9 @@ public enum DeclareBuiltin implements Builtin {
 
 			final var value = environment.getVariable(name);
 			if (value != null) {
-				redirectStreams.error().printf("%s -- %s=\"%s\"", programName, name, value);
+				redirectStreams.error().println("%s -- %s=\"%s\"", programName, name, value);
 			} else {
-				redirectStreams.error().printf("%s: %s: not found", programName, name);
+				redirectStreams.error().println("%s: %s: not found", programName, name);
 			}
 		} else if (!flag.startsWith("-")) {
 			final var parts = flag.split("=", 2);
@@ -32,7 +32,7 @@ public enum DeclareBuiltin implements Builtin {
 			final var value = parts[1];
 
 			if (!Environment.isValidName(name)) {
-				redirectStreams.error().printf("%s: `%s=%s': not a valid identifier", programName, name, value);
+				redirectStreams.error().println("%s: `%s=%s': not a valid identifier", programName, name, value);
 				return OptionalInt.empty();
 			}
 
