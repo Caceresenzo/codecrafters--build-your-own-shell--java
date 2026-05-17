@@ -14,7 +14,7 @@ public enum ExecutableCompletionResolver implements CompletionResolver {
 	INSTANCE;
 
 	@Override
-	public Set<String> getCompletions(Shell shell, Path directory, String command, String prefix) {
+	public Set<String> getCompletions(Shell shell, String line, Path directory, String prefix) {
 		final var candidates = new HashSet<String>();
 
 		final FileFilter filter = (file) -> {
