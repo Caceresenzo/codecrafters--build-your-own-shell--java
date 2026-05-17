@@ -18,6 +18,7 @@ import shell.command.builtin.HistoryBuiltin;
 import shell.command.builtin.JobsBuiltin;
 import shell.command.builtin.PwdBuiltin;
 import shell.command.builtin.TypeBuiltin;
+import shell.complete.Completer;
 import shell.history.History;
 import shell.job.JobManager;
 
@@ -42,6 +43,7 @@ public class Shell implements AutoCloseable {
 	private @Getter History history = new History(this);
 	private @Getter JobManager jobs = new JobManager();
 	private @Getter Environment environment = new Environment();
+	private @Getter Completer completer = new Completer();
 
 	public Builtin whichBuiltin(String name) {
 		return builtins.get(name);

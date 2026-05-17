@@ -1,4 +1,4 @@
-package shell.autocomplete;
+package shell.complete;
 
 import java.nio.file.Path;
 import java.util.Set;

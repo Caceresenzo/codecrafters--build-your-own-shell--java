@@ -1,4 +1,4 @@
-package shell.autocomplete;
+package shell.complete;
 
 import java.nio.file.Path;
 import java.util.Comparator;
@@ -11,22 +11,27 @@ import java.util.stream.Collectors;
 import lombok.Getter;
 import shell.Main;
 import shell.Shell;
-import shell.autocomplete.impl.BuiltinCompletionResolver;
-import shell.autocomplete.impl.ExecutableCompletionResolver;
-import shell.autocomplete.impl.FileCompletionResolver;
+import shell.complete.impl.BuiltinCompletionResolver;
+import shell.complete.impl.CustomCompletionResolver;
+import shell.complete.impl.ExecutableCompletionResolver;
+import shell.complete.impl.FileCompletionResolver;
 
-public class Autocompleter {
+public class Completer {
 
 	public static final Comparator<String> SHORTEST_FIRST = Comparator.comparingInt(String::length).thenComparing(String::compareTo);
+
+	@Getter
+	private final CustomCompletionResolver customCompletionResolver = new CustomCompletionResolver();
 
 	@Getter
 	public final List<CompletionResolver> resolvers = List.of(
 		BuiltinCompletionResolver.INSTANCE,
 		ExecutableCompletionResolver.INSTANCE,
-		FileCompletionResolver.INSTANCE
+		FileCompletionResolver.INSTANCE,
+		customCompletionResolver
 	);
 
-	public Result autocomplete(Shell shell, StringBuilder line, boolean bellRang) {
+	public Result complete(Shell shell, StringBuilder line, boolean bellRang) {
 		final var currentLine = line.toString();
 
 		final var lastSpaceIndex = currentLine.lastIndexOf(' ');

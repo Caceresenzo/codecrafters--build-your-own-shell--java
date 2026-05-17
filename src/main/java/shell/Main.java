@@ -12,7 +12,6 @@ import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
 
 import lombok.SneakyThrows;
-import shell.autocomplete.Autocompleter;
 import shell.command.Binary;
 import shell.command.builtin.Builtin;
 import shell.io.RedirectStreams;
@@ -96,7 +95,8 @@ public class Main {
 
 	@SneakyThrows
 	public static String read(Shell shell) {
-		final var autocompleter = new Autocompleter();
+		final var completer = shell.getCompleter();
+
 		final var line = new StringBuilder();
 
 		var promptLength = 0;
@@ -135,7 +135,7 @@ public class Main {
 					}
 
 					case '\t': {
-						switch (autocompleter.autocomplete(shell, line, bellRang)) {
+						switch (completer.complete(shell, line, bellRang)) {
 							case NONE -> {
 								bellRang = false;
 								bell();
