@@ -8,6 +8,6 @@ import shell.Shell;
 @FunctionalInterface
 public interface CompletionResolver {
 
-	Set<String> getCompletions(Shell shell, boolean isCommand, Path directory, String prefix);
+	Set<String> getCompletions(Shell shell, Path directory, String command, String prefix);
 
 }

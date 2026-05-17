@@ -13,7 +13,7 @@ public enum FileCompletionResolver implements CompletionResolver {
 	INSTANCE;
 
 	@Override
-	public Set<String> getCompletions(Shell shell, boolean isCommand, Path directory, String prefix) {
+	public Set<String> getCompletions(Shell shell, Path directory, String command, String prefix) {
 		final FileFilter filter = (file) -> {
 			return file.getName().startsWith(prefix);
 		};
