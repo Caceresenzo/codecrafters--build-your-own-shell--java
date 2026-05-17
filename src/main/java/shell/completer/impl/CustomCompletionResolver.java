@@ -33,7 +33,7 @@ public class CustomCompletionResolver implements CompletionResolver {
 			return Set.of();
 		}
 
-		final var lastArgument = arguments.size() > 0 ? arguments.get(arguments.size() - 1).resolve(environment) : "";
+		final var lastArgument = !arguments.isEmpty() ? arguments.get(arguments.size() - 1).resolve(environment) : "";
 		final var previousArgument = arguments.size() > 1 ? arguments.get(arguments.size() - 2).resolve(environment) : "";
 
 		return runHandler(handlerPath.get(), zeroArgument, lastArgument, previousArgument, line);
@@ -75,6 +75,10 @@ public class CustomCompletionResolver implements CompletionResolver {
 
 	public void registerHandler(String programName, String command) {
 		handlers.put(programName, command);
+	}
+
+	public boolean unregisterHandler(String programName) {
+		return handlers.remove(programName) != null;
 	}
 
 	public Optional<String> getHandler(String programName) {
