@@ -23,6 +23,15 @@ public enum CompleteBuiltin implements Builtin {
 				shell.getCompleter().getCustomCompletionResolver().registerHandler(programName, completerPath);
 			}
 
+			case "-r" -> {
+				final var programName = arguments.get(2);
+
+				final var unregistered = shell.getCompleter().getCustomCompletionResolver().unregisterHandler(programName);
+				if (!unregistered) {
+					redirectStreams.error().println("%s: %s: no completion specification", completeProgramName, programName);
+				}
+			}
+
 			case "-p" -> {
 				final var programName = arguments.get(2);
 
