@@ -36,15 +36,29 @@ public class CustomCompletionResolver implements CompletionResolver {
 		final var lastArgument = arguments.size() > 1 ? arguments.get(arguments.size() - 1).resolve(environment) : "";
 		final var previousArgument = arguments.size() > 2 ? arguments.get(arguments.size() - 2).resolve(environment) : "";
 
-		return runHandler(handlerPath.get(), zeroArgument, lastArgument, previousArgument);
+		return runHandler(handlerPath.get(), zeroArgument, lastArgument, previousArgument, line);
 	}
 
-	private Set<String> runHandler(String handlerPath, String zeroArgument, String lastArgument, String previousArgument) throws IOException {
+	private Set<String> runHandler(String handlerPath, String zeroArgument, String lastArgument, String previousArgument, String originalLine) throws IOException {
 		final var candidates = new HashSet<String>();
 
-		final var process = Runtime.getRuntime()
-			.exec(new String[] { handlerPath, zeroArgument, lastArgument, previousArgument });
+		final var environment = new HashMap<String, String>(System.getenv());
+		environment.put("COMP_LINE", originalLine);
+		environment.put("COMP_POINT", String.valueOf(originalLine.length()));
 
+		final var argv = new String[] {
+			handlerPath,
+			zeroArgument,
+			lastArgument,
+			previousArgument
+		};
+
+		final var envp = environment.entrySet()
+			.stream()
+			.map((entry) -> entry.getKey() + "=" + entry.getValue())
+			.toArray(String[]::new);
+
+		final var process = Runtime.getRuntime().exec(argv, envp);
 		final var stdout = new BufferedReader(new InputStreamReader(process.getInputStream()));
 
 		String line = null;
