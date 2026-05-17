@@ -2,9 +2,9 @@ package shell.completer;
 
 import java.nio.file.Path;
 import java.util.Comparator;
+import java.util.HashSet;
 import java.util.List;
 import java.util.SequencedSet;
-import java.util.Set;
 import java.util.TreeSet;
 import java.util.stream.Collectors;
 
@@ -34,6 +34,11 @@ public class Completer {
 	public Result complete(Shell shell, StringBuilder line, boolean bellRang) {
 		final var currentLine = line.toString();
 
+		final var firstSpaceIndex = currentLine.indexOf(' ');
+		final var command = firstSpaceIndex == -1
+			? currentLine
+			: currentLine.substring(0, firstSpaceIndex);
+
 		final var lastSpaceIndex = currentLine.lastIndexOf(' ');
 		final var isBeginningCommand = lastSpaceIndex == -1;
 		final var beginning = isBeginningCommand
@@ -58,9 +63,21 @@ public class Completer {
 			? shell.getWorkingDirectory().resolve(parent)
 			: shell.getWorkingDirectory();
 
-		final var candidates = resolvers.stream()
-			.map((resolver) -> resolver.getCompletions(shell, isBeginningCommand, directory, prefix))
-			.flatMap(Set::stream)
+		final var rawCandidates = new HashSet<String>();
+
+		if (isBeginningCommand) {
+			rawCandidates.addAll(BuiltinCompletionResolver.INSTANCE.getCompletions(shell, directory, command, prefix));
+			rawCandidates.addAll(ExecutableCompletionResolver.INSTANCE.getCompletions(shell, directory, command, prefix));
+		}
+
+		final var customCandidates = customCompletionResolver.getCompletions(shell, directory, command, prefix);
+		if (!customCandidates.isEmpty()) {
+			rawCandidates.addAll(customCandidates);
+		} else {
+			rawCandidates.addAll(FileCompletionResolver.INSTANCE.getCompletions(shell, directory, command, prefix));
+		}
+
+		final var candidates = rawCandidates.stream()
 			.map((candidate) -> candidate.substring(prefix.length()))
 			.collect(Collectors.toCollection(() -> new TreeSet<>(SHORTEST_FIRST)));
 

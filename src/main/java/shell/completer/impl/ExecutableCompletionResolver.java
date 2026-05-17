@@ -14,11 +14,7 @@ public enum ExecutableCompletionResolver implements CompletionResolver {
 	INSTANCE;
 
 	@Override
-	public Set<String> getCompletions(Shell shell, boolean isCommand, Path directory, String prefix) {
-		if (!isCommand) {
-			return Set.of();
-		}
-
+	public Set<String> getCompletions(Shell shell, Path directory, String command, String prefix) {
 		final var candidates = new HashSet<String>();
 
 		final FileFilter filter = (file) -> {

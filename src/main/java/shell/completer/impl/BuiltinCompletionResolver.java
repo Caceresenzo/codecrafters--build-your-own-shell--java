@@ -12,11 +12,7 @@ public enum BuiltinCompletionResolver implements CompletionResolver {
 	INSTANCE;
 
 	@Override
-	public Set<String> getCompletions(Shell shell, boolean isCommand, Path directory, String prefix) {
-		if (!isCommand) {
-			return Set.of();
-		}
-
+	public Set<String> getCompletions(Shell shell, Path directory, String command, String prefix) {
 		return shell.getBuiltins()
 			.keySet()
 			.stream()
