@@ -39,12 +39,26 @@ public class CustomCompletionResolver implements CompletionResolver {
 		return runHandler(handlerPath.get(), zeroArgument, lastArgument, previousArgument);
 	}
 
-	private Set<String> runHandler(String handlerPath, String zeroArgument, String lastArgument, String previousArgument) throws IOException {
+	private Set<String> runHandler(String handlerPath, String zeroArgument, String lastArgument, String previousArgument, String originalLine) throws IOException {
 		final var candidates = new HashSet<String>();
 
-		final var process = Runtime.getRuntime()
-			.exec(new String[] { handlerPath, zeroArgument, lastArgument, previousArgument });
+		final var environment = new HashMap<String, String>(System.getenv());
+		environment.put("COMP_LINE", originalLine);
+		environment.put("COMP_POINT", String.valueOf(originalLine.length()));
 
+		final var argv = new String[] {
+			handlerPath,
+			zeroArgument,
+			lastArgument,
+			previousArgument
+		};
+
+		final var envp = environment.entrySet()
+			.stream()
+			.map((entry) -> entry.getKey() + "=" + entry.getValue())
+			.toArray(String[]::new);
+
+		final var process = Runtime.getRuntime().exec(argv, envp);
 		final var stdout = new BufferedReader(new InputStreamReader(process.getInputStream()));
 
 		String line = null;
