@@ -1,11 +1,11 @@
-package shell.autocomplete.impl;
+package shell.completer.impl;
 
 import java.nio.file.Path;
 import java.util.Set;
 import java.util.stream.Collectors;
 
 import shell.Shell;
-import shell.autocomplete.CompletionResolver;
+import shell.completer.CompletionResolver;
 
 public enum BuiltinCompletionResolver implements CompletionResolver {
 
