@@ -33,8 +33,8 @@ public class CustomCompletionResolver implements CompletionResolver {
 			return Set.of();
 		}
 
-		final var lastArgument = arguments.size() > 1 ? arguments.get(arguments.size() - 1).resolve(environment) : "";
-		final var previousArgument = arguments.size() > 2 ? arguments.get(arguments.size() - 2).resolve(environment) : "";
+		final var lastArgument = arguments.size() > 0 ? arguments.get(arguments.size() - 1).resolve(environment) : "";
+		final var previousArgument = arguments.size() > 1 ? arguments.get(arguments.size() - 2).resolve(environment) : "";
 
 		return runHandler(handlerPath.get(), zeroArgument, lastArgument, previousArgument, line);
 	}
